@@ -1,0 +1,23 @@
+SELECT * {
+    {
+        SELECT * WHERE {
+        ?object a <http://dbpedia.org/ontology/Philosopher> .
+        ?object dbo:wikiPageID ?wikiPageID.
+        ?object dbo:notableIdea ?notableIdea .
+        OPTIONAL {
+            ?notableIdea dbo:abstract ?notableIdea_abstract
+            FILTER(lang(?notableIdea_abstract) = 'en')
+        } .
+        OPTIONAL {
+            ?notableIdea dbo:wikiPageID ?notableIdea_wikiPageID
+        }
+        }
+    }
+    UNION {
+        SELECT * WHERE {
+        ?object a <http://dbpedia.org/ontology/Philosopher> .
+        ?object dbo:wikiPageID ?wikiPageID.
+        ?object dbp:notableIdeas ?notableIdea
+        }
+    }
+} ORDER BY ASC(?object)

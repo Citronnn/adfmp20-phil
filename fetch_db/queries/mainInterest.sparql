@@ -1,0 +1,10 @@
+SELECT * WHERE {
+?object a <http://dbpedia.org/ontology/Philosopher> .
+?object dbo:wikiPageID ?wikiPageID .
+?object dbo:mainInterest ?mainInterest .
+OPTIONAL {
+    ?mainInterest dbo:abstract ?mainInterest_abstract
+    FILTER(lang(?mainInterest_abstract) = 'en')
+} .
+OPTIONAL {?mainInterest dbo:wikiPageID ?mainInterest_wikiPageID}
+} ORDER BY ASC(?object)

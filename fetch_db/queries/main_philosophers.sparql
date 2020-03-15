@@ -1,0 +1,14 @@
+SELECT * WHERE {
+?object a <http://dbpedia.org/ontology/Philosopher> .
+OPTIONAL {?object dbp:name ?name} .
+OPTIONAL {?object dbo:birthDate ?birthDate FILTER(datatype(?birthDate) = xsd:date)} .
+OPTIONAL {?object dbo:deathDate ?deathDate FILTER(datatype(?deathDate) = xsd:date)} .
+OPTIONAL {?object dbo:abstract ?abstract FILTER (lang(?abstract) = 'en')}.
+OPTIONAL {?object foaf:name ?name2} .
+OPTIONAL {?object foaf:gender ?gender} .
+OPTIONAL {?object dbp:birthName ?birthName} .
+OPTIONAL {?object dbp:nationality ?nationality} .
+OPTIONAL {?object dbp:reqion ?region} .
+OPTIONAL {?object dbo:wikiPageID ?wikiPageID}
+} ORDER BY ASC(?object)
+
