@@ -1,0 +1,14 @@
+name: phil
+channels:
+  - defaults
+dependencies:
+  - python=3.8.0
+  - python-language-server
+  - pip
+  - pip:
+    - sqlalchemy
+    - tqdm
+    - pylama
+    - neovim
+    - pudb
+    - requests
