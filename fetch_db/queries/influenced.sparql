@@ -1,0 +1,19 @@
+SELECT * {
+    {
+        SELECT * WHERE {
+        ?object1 a <http://dbpedia.org/ontology/Philosopher> .
+        ?object1 dbo:wikiPageID ?object1_wikiPageID .
+        ?object1 dbo:influenced ?object2 .
+        ?object2 dbo:wikiPageID ?object2_wikiPageID
+        }
+    }
+    UNION
+    {
+        SELECT * WHERE {
+        ?object2 a <http://dbpedia.org/ontology/Philosopher> .
+        ?object2 dbo:wikiPageID ?object2_wikiPageID .
+        ?object2 dbo:influencedBy ?object1 .
+        ?object1 dbo:wikiPageID ?object1_wikiPageID
+        }
+    }
+} ORDER BY ASC(?object1)
