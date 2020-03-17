@@ -5,6 +5,7 @@
     android:layout_height="match_parent"
     tools:context=".SearchTab">
 <LinearLayout
+    android:id="@+id/layoutForSearchField"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:weightSum="1"
@@ -20,5 +21,13 @@
         android:layout_weight="0.9"
         android:layout_height="wrap_content"/>
 </LinearLayout>
+<androidx.recyclerview.widget.RecyclerView
+    android:layout_below="@+id/layoutForSearchField"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/rv">
+
+</androidx.recyclerview.widget.RecyclerView>
+
 
 </RelativeLayout>

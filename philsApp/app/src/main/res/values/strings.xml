@@ -13,4 +13,6 @@
     <string name="googleTrendsFilter">Топ из Google Trends</string>
     <string name="countLabel">Количество</string>
     <string name="clearFiltersButton">Сброс</string>
+    <string name="labelForSearchCardType">Тип: </string>
+    <string name="labelForSearchCardYears">Годы жизни: </string>
 </resources>
