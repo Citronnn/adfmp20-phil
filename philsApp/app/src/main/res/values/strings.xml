@@ -1,0 +1,18 @@
+<resources>
+    <string name="app_name">philsApp</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="yearsFilter">Годы</string>
+    <string name="elementsFilter">Элементы</string>
+    <string name="schoolsFilter">Школы</string>
+    <string name="philsFilter">Философы</string>
+    <string name="meansFilter">Понятия</string>
+    <string name="agesFilter">Эпохи</string>
+    <string name="countFilter">Отображение</string>
+    <string name="googleTrendsFilter">Топ из Google Trends</string>
+    <string name="countLabel">Количество</string>
+    <string name="clearFiltersButton">Сброс</string>
+    <string name="labelForSearchCardType">Тип: </string>
+    <string name="labelForSearchCardYears">Годы жизни: </string>
+</resources>

@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".FiltersTab">
+
+    <TextView
+        android:id="@+id/yearsLabel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="25sp"
+        android:text="@string/yearsFilter"/>
+
+    <com.appyvet.materialrangebar.RangeBar
+        android:id="@+id/rangeBar"
+        android:layout_below="@id/yearsLabel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:mrb_rangeBar="true"
+        app:mrb_temporaryPins="false"
+        app:mrb_pinRadius="16dp"
+        app:mrb_selectorSize="10dp" />
+    <TextView
+        android:id="@+id/elementsLabel"
+        android:layout_below="@id/rangeBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="25sp"
+        android:text="@string/elementsFilter"/>
+    <androidx.appcompat.widget.AppCompatCheckBox
+        android:id="@+id/schoolsFilter"
+        android:layout_below="@id/elementsLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/schoolsFilter"/>
+    <androidx.appcompat.widget.AppCompatCheckBox
+        android:id="@+id/philsFilter"
+        android:layout_below="@id/schoolsFilter"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/philsFilter"/>
+    <androidx.appcompat.widget.AppCompatCheckBox
+        android:id="@+id/meansFilter"
+        android:layout_below="@id/philsFilter"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/meansFilter"/>
+    <androidx.appcompat.widget.AppCompatCheckBox
+        android:id="@+id/agesFilter"
+        android:layout_below="@id/meansFilter"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/agesFilter"/>
+    <TextView
+        android:id="@+id/viewCountLabel"
+        android:layout_below="@id/agesFilter"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="25sp"
+        android:text="@string/countFilter"/>
+    <androidx.appcompat.widget.AppCompatCheckBox
+        android:id="@+id/googleTrendsFilter"
+        android:layout_below="@id/viewCountLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/googleTrendsFilter"/>
+    <LinearLayout
+        android:id="@+id/layoutForGoogleTrends"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_below="@id/googleTrendsFilter">
+        <TextView
+            android:id="@+id/countLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="20sp"
+            android:text="@string/countLabel"/>
+
+        <ImageButton
+            android:id="@+id/decreaseButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:src="@drawable/ic_remove_circle_black_24dp"/>
+        <EditText
+            android:id="@+id/editCount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="20sp"
+            android:inputType="numberSigned"
+            android:layout_marginLeft="5dp"
+            android:text="50" />
+        <ImageButton
+            android:id="@+id/increaseButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:src="@drawable/ic_add_circle_black_24dp" />
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/buttonClearFilters"
+        android:layout_below="@+id/layoutForGoogleTrends"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/clearFiltersButton" />
+</RelativeLayout>
