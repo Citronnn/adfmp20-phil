@@ -15,4 +15,5 @@
     <string name="clearFiltersButton">Сброс</string>
     <string name="labelForSearchCardType">Тип: </string>
     <string name="labelForSearchCardYears">Годы жизни: </string>
+    <string name="filtersTopic">Фильтрация</string>
 </resources>

@@ -1,6 +1,5 @@
 package com.example.philsapp
 
-import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -11,54 +10,66 @@ import androidx.fragment.app.FragmentPagerAdapter
 import androidx.viewpager.widget.ViewPager
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayout.TabLayoutOnPageChangeListener
-import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.activity_filters.*
 
 
 class FiltersActivity : AppCompatActivity() {
     val TAG = "kek"
     private var mSectionsPagerAdapter: SectionsPagerAdapter? = null
     private var mViewPager: ViewPager? = null
-    fun showFilters() {
-        Log.d(TAG, "current")
+    object Filters {
+        var phils = 1
+        var schools = 1
+        var meanings = 0
+        var countGT = 50
+        var ages = 0
+        var topGT = 0
+        var yearStart = -300
+        var yearEnd = 1000
     }
-    fun showGraph() {
-        Log.d(TAG, "graph")
-        val myIntent = Intent(this, MainActivity::class.java)
-        startActivityForResult(myIntent, 2)
+    object SearchResults {
+        var wordForSearch = ""
+        var countResults = 0
+        var selectedVariant = 0
+        var listVariants = arrayListOf<Any>()
     }
-    fun showTimeLine() {
-        Log.d(TAG, "time line")
-        val myIntent = Intent(this, TimeLineActivity::class.java)
-        startActivityForResult(myIntent, 3)
+    fun getSearch(): SearchResults {
+        return SearchResults
     }
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (data == null) return
-        when(requestCode) {
-            1 -> Log.d(TAG, "код 1")
-            2 -> Log.d(TAG, "код 2")
-            3 -> Log.d(TAG, "код 3")
-            else -> Log.d(TAG, "другой")
-        }
+    fun setSearchResults(data: SearchTab.SearchResultsObject) {
+        SearchResults.wordForSearch = data.wordForSearch
+        SearchResults.countResults = data.countResults
+        SearchResults.selectedVariant = data.selectedVariant
+        SearchResults.listVariants = data.listVariants
+    }
+    fun getFilters(): Filters {
+        return Filters
+    }
+    fun setFilters(data: FiltersTab.FiltersObject) {
+        Filters.phils = data.phils
+        Filters.schools = data.schools
+        Filters.countGT = data.countGT
+        Filters.meanings = data.meanings
+        Filters.ages = data.ages
+        Filters.topGT = data.topGT
+        Filters.yearStart = data.yearStart
+        Filters.yearEnd = data.yearEnd
+    }
+    fun returnAfterSearch() {
+        intent.putExtra("search", "search")
+        setResult(3, intent)
+        finish()
     }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_filters)
-        navbar.setOnNavigationItemSelectedListener { item ->
-            when (item.itemId) {
-                R.id.nav_filters -> showFilters()
-                R.id.nav_graph -> showGraph()
-                R.id.nav_timeline -> showTimeLine()
-                else -> {
-                    Log.d("kek", "Назад")
-                }
-            }
-            true
+        returnFromFilters.setOnClickListener {
+            intent.putExtra("filters", "filters")
+            setResult(1, intent)
+            finish()
         }
         mSectionsPagerAdapter = SectionsPagerAdapter(supportFragmentManager)
 
-        // Set up the ViewPager with the sections adapter.
-        // Set up the ViewPager with the sections adapter.
         mViewPager = findViewById(R.id.pager) as ViewPager
         mViewPager!!.setAdapter(mSectionsPagerAdapter)
 
