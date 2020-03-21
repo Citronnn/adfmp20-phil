@@ -11,8 +11,9 @@ class TimeLineActivity : AppCompatActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (data == null) return
-        when(requestCode) {
+        when(resultCode) {
             1 -> Log.d(TAG, data.getStringExtra("filters"))
+            3 -> Log.d(TAG, data.getStringExtra("search"))
             else -> Log.d(TAG, "другой")
         }
     }

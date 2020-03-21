@@ -69,7 +69,7 @@ class MainActivity : AppCompatActivity() {
         super.onActivityResult(requestCode, resultCode, data)
         if (data == null) return
         createGraph()
-        when (requestCode) {
+        when (resultCode) {
             1 -> Log.d(TAG, data.getStringExtra("filters"))
             2 -> Log.d(TAG, data.getStringExtra("filters"))
             3 -> Log.d(TAG, data.getStringExtra("search"))

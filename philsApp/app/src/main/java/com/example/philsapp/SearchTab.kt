@@ -30,7 +30,9 @@ class SearchTab : Fragment() {
     }
     fun onCardClickListener(position: Int): Unit {
         Log.d("kek", position.toString())
-        activity.returnAfterSearch()
+        getActivity()?.intent?.putExtra("search", "search")
+        getActivity()?.setResult(3, getActivity()?.intent)
+        getActivity()?.finish()
     }
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

@@ -1,5 +1,7 @@
 package com.example.philsapp
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -54,11 +56,6 @@ class FiltersActivity : AppCompatActivity() {
         Filters.topGT = data.topGT
         Filters.yearStart = data.yearStart
         Filters.yearEnd = data.yearEnd
-    }
-    fun returnAfterSearch() {
-        intent.putExtra("search", "search")
-        setResult(3, intent)
-        finish()
     }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
