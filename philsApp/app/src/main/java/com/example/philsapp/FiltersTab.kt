@@ -11,7 +11,6 @@ import android.widget.*
 import androidx.fragment.app.Fragment
 import com.appyvet.materialrangebar.RangeBar
 import com.appyvet.materialrangebar.RangeBar.OnRangeBarChangeListener
-import kotlinx.android.synthetic.main.fragment_filters_tab.*
 
 
 /**
@@ -19,15 +18,15 @@ import kotlinx.android.synthetic.main.fragment_filters_tab.*
  */
 class FiltersTab : Fragment() {
 
-    private val filters = object {
-        var phils = 1
-        var schools = 1
+    object FiltersObject {
+        var phils = 0
+        var schools = 0
         var meanings = 0
         var ages = 0
-        var topGT = 1
-        var yearStart = -300
-        var yearEnd = 1000
-
+        var topGT = 0
+        var countGT: Int = 50
+        var yearStart = 0
+        var yearEnd = 0
     }
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -46,27 +45,42 @@ class FiltersTab : Fragment() {
         val decreaseButton = view.findViewById<ImageButton>(R.id.decreaseButton)
         val layoutForGoogleTrends = view.findViewById<LinearLayout>(R.id.layoutForGoogleTrends)
         val buttonClearFilters: Button = view.findViewById<Button>(R.id.buttonClearFilters)
+        val activity = FiltersActivity()
+        val data = activity.getFilters()
+        FiltersObject.phils = data.phils
+        FiltersObject.schools = data.schools
+        FiltersObject.countGT = data.countGT
+        FiltersObject.meanings = data.meanings
+        FiltersObject.ages = data.ages
+        FiltersObject.topGT = data.topGT
+        FiltersObject.yearStart = data.yearStart
+        FiltersObject.yearEnd = data.yearEnd
         buttonClearFilters.setOnClickListener {
             setFilters(rangeBar, schoolsFilter, philsFilter,
-                meansFilter, agesFilter, googleTrendsFilter, layoutForGoogleTrends)
+                meansFilter, agesFilter, googleTrendsFilter, layoutForGoogleTrends,
+                editCount)
         }
         rangeBar.tickStart = (-800).toFloat()
         rangeBar.tickEnd = 2000F
         setFilters(rangeBar, schoolsFilter, philsFilter,
-            meansFilter, agesFilter, googleTrendsFilter, layoutForGoogleTrends)
-        editCount.setText("50")
+            meansFilter, agesFilter, googleTrendsFilter, layoutForGoogleTrends,
+            editCount)
         editCount.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
 
             }
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                FiltersObject.countGT = Integer.parseInt(editCount.text.toString())
                 if (Integer.parseInt(editCount.text.toString()) > 100) {
+                    FiltersObject.countGT = 100
                     editCount.setText("100")
                 }
                 if (Integer.parseInt(editCount.text.toString()) < 0) {
+                    FiltersObject.countGT = 0
                     editCount.setText("0")
                 }
+                activity.setFilters(FiltersObject)
             }
 
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
@@ -87,6 +101,9 @@ class FiltersTab : Fragment() {
                 leftPinValue: String,
                 rightPinValue: String
             ) {
+                FiltersObject.yearStart = leftPinIndex.toInt()
+                FiltersObject.yearEnd = rightPinIndex.toInt()
+                activity.setFilters(FiltersObject)
                 Log.d("kek", "$leftPinIndex, $rightPinIndex")
             }
 
@@ -96,58 +113,74 @@ class FiltersTab : Fragment() {
         schoolsFilter.setOnCheckedChangeListener(CompoundButton.OnCheckedChangeListener { compoundButton, b ->
             if (compoundButton.isChecked) { // делаем работу, если кнопка стала активной
                 Log.d("kek", "школы активно")
+                FiltersObject.schools = 1
             } else { // делаем работу, если кнопка перестала быть активной
                 Log.d("kek", "школы не активно")
+                FiltersObject.schools = 0
             }
+            activity.setFilters(FiltersObject)
         })
         philsFilter.setOnCheckedChangeListener(CompoundButton.OnCheckedChangeListener { compoundButton, b ->
             if (compoundButton.isChecked) {
                 Log.d("kek", "философы активно")
+                FiltersObject.phils = 1
             } else { // делаем работу, если кнопка перестала быть активной
                 Log.d("kek", "философы не активно")
+                FiltersObject.phils = 0
             }
+            activity.setFilters(FiltersObject)
         })
         meansFilter.setOnCheckedChangeListener(CompoundButton.OnCheckedChangeListener { compoundButton, b ->
             if (compoundButton.isChecked) { // делаем работу, если кнопка стала активной
                 Log.d("kek", "понятия активно")
+                FiltersObject.meanings = 1
             } else { // делаем работу, если кнопка перестала быть активной
                 Log.d("kek", "понятия не активно")
+                FiltersObject.meanings = 0
             }
+            activity.setFilters(FiltersObject)
         })
         agesFilter.setOnCheckedChangeListener(CompoundButton.OnCheckedChangeListener { compoundButton, b ->
             if (compoundButton.isChecked) { // делаем работу, если кнопка стала активной
                 Log.d("kek", "эпохи активно")
+                FiltersObject.ages = 1
             } else { // делаем работу, если кнопка перестала быть активной
                 Log.d("kek", "эпохи не активно")
+                FiltersObject.ages = 0
             }
+            activity.setFilters(FiltersObject)
         })
         googleTrendsFilter.setOnCheckedChangeListener(CompoundButton.OnCheckedChangeListener { compoundButton, b ->
             if (compoundButton.isChecked) { // делаем работу, если кнопка стала активной
                 Log.d("kek", "топ активно")
                 layoutForGoogleTrends.visibility = View.VISIBLE
+                FiltersObject.topGT = 1
             } else { // делаем работу, если кнопка перестала быть активной
                 Log.d("kek", "топ не активно")
                 layoutForGoogleTrends.visibility = View.INVISIBLE
+                FiltersObject.topGT = 0
 
             }
+            activity.setFilters(FiltersObject)
         })
         return view
     }
     fun setFilters(rangeBar: RangeBar, schoolsFilter:CheckBox, philsFilter:CheckBox,
                    meansFilter: CheckBox, agesFilter: CheckBox, googleTrendsFilter: CheckBox,
-                   layoutForGoogleTrends: LinearLayout) {
-        philsFilter.isChecked = this.filters.phils == 1
-        agesFilter.isChecked = this.filters.ages == 1
-        schoolsFilter.isChecked = this.filters.schools == 1
-        meansFilter.isChecked = this.filters.meanings == 1
-        if (this.filters.topGT == 1) {
+                   layoutForGoogleTrends: LinearLayout, editCount: EditText) {
+        philsFilter.isChecked = FiltersObject.phils == 1
+        editCount.setText(FiltersObject.countGT.toString())
+        agesFilter.isChecked = FiltersObject.ages == 1
+        schoolsFilter.isChecked = FiltersObject.schools == 1
+        meansFilter.isChecked = FiltersObject.meanings == 1
+        if (FiltersObject.topGT == 1) {
             googleTrendsFilter.isChecked = true
             layoutForGoogleTrends.visibility = View.VISIBLE
         } else {
             googleTrendsFilter.isChecked = false
             layoutForGoogleTrends.visibility = View.INVISIBLE
         }
-        rangeBar.setRangePinsByValue((this.filters.yearStart).toFloat(), (this.filters.yearEnd).toFloat())
+        rangeBar.setRangePinsByValue((FiltersObject.yearStart).toFloat(), (FiltersObject.yearEnd).toFloat())
     }
 
 }

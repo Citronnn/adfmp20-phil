@@ -5,16 +5,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".TimeLineActivity">
-    <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:id="@+id/navbar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:background="?android:attr/windowBackground"
-        app:itemIconTint="@color/colorPrimary"
-        app:itemTextColor="@color/colorPrimary"
-        app:labelVisibilityMode="labeled"
-        app:menu="@menu/bottom_navigation" />
     <TextView
         android:id="@+id/textView3"
         android:layout_width="39dp"
@@ -22,4 +12,25 @@
         android:text="Линия"
         tools:layout_editor_absoluteX="166dp"
         tools:layout_editor_absoluteY="280dp" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/gotoGraph"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@color/colorPrimaryDark"
+        android:layout_marginBottom="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        app:srcCompat="@drawable/ic_grain_black_24dp" />
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/filters"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@color/colorPrimaryDark"
+        android:layout_marginBottom="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_above="@id/gotoGraph"
+        android:layout_alignParentRight="true"
+        app:srcCompat="@drawable/ic_filter_list_black_24dp" />
 </RelativeLayout>

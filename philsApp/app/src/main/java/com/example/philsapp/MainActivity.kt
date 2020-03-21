@@ -16,48 +16,8 @@ import kotlinx.android.synthetic.main.activity_main.*
 class MainActivity : AppCompatActivity() {
     val TAG = "kek"
     var nodeCount = 1
-    fun showFilters() {
-        Log.d(TAG, "filters")
-        val myIntent = Intent(this, FiltersActivity::class.java)
-        startActivityForResult(myIntent, 1)
-    }
 
-    fun showGraph() {
-        Log.d(TAG, "current")
-    }
-
-    fun showTimeLine() {
-        Log.d(TAG, "time line")
-        val myIntent = Intent(this, TimeLineActivity::class.java)
-        startActivityForResult(myIntent, 3)
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (data == null) return
-        when (requestCode) {
-            1 -> Log.d(TAG, "код 1")
-            2 -> Log.d(TAG, "код 2")
-            3 -> Log.d(TAG, "код 3")
-            else -> Log.d(TAG, "другой")
-        }
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-        navbar.setOnNavigationItemSelectedListener { item ->
-            when (item.itemId) {
-                R.id.nav_filters -> showFilters()
-                R.id.nav_graph -> showGraph()
-                R.id.nav_timeline -> showTimeLine()
-                else -> {
-                    Log.d("kek", "Назад")
-                }
-            }
-            true
-
-        }
+    fun createGraph() {
         val graphView = findViewById<GraphView>(R.id.graph)
         // example tree
         val graph = Graph()
@@ -70,11 +30,11 @@ class MainActivity : AppCompatActivity() {
         val g = Node(getNodeText())
         val h = Node(getNodeText())
         val nodes = arrayListOf<Node>()
-        for (n in 1..100) {
+        for (n in 1..50) {
             nodes.add(Node(getNodeText()))
         }
-        for (n in 1..100) {
-            graph.addEdge(nodes[(0..99).random()], nodes[(0..99).random()])
+        for (n in 1..50) {
+            graph.addEdge(nodes[(0..49).random()], nodes[(0..49).random()])
         }
         graph.addEdge(a, b)
         graph.addEdge(a, c)
@@ -103,6 +63,36 @@ class MainActivity : AppCompatActivity() {
         graphView.adapter = adapter
         // set the algorithm here
         adapter.setAlgorithm(FruchtermanReingoldAlgorithm(1000))
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (data == null) return
+        createGraph()
+        when (requestCode) {
+            1 -> Log.d(TAG, data.getStringExtra("filters"))
+            2 -> Log.d(TAG, data.getStringExtra("filters"))
+            3 -> Log.d(TAG, data.getStringExtra("search"))
+            else -> Log.d(TAG, "другой")
+        }
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
+        filters.setOnClickListener{
+            Log.d(TAG, "filters")
+            val myIntent = Intent(this, FiltersActivity::class.java)
+            startActivityForResult(myIntent, 1)
+        }
+        gotoLine.setOnClickListener{
+            Log.d(TAG, "time line")
+            Log.d(TAG, FiltersActivity.Filters.phils.toString())
+            val myIntent = Intent(this, TimeLineActivity::class.java)
+            startActivityForResult(myIntent, 2)
+        }
+        Log.d(TAG,"startQWQW")
+        createGraph()
     }
 
     private fun getNodeText(): String {

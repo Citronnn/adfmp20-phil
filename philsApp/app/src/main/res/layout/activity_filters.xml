@@ -5,25 +5,34 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".FiltersActivity">
-    <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:id="@+id/navbar"
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/returnFromFilters"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@color/colorPrimaryDark"
+        android:layout_marginBottom="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        app:srcCompat="@drawable/ic_exit_to_app_black_24dp" />
+    <TextView
+        android:id="@+id/filtersTopic"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:background="?android:attr/windowBackground"
-        app:itemIconTint="@color/colorPrimary"
-        app:itemTextColor="@color/colorPrimary"
-        app:labelVisibilityMode="labeled"
-        app:menu="@menu/bottom_navigation" />
+        android:textSize="25sp"
+        android:background="@color/colorPrimaryDark"
+        android:textColor="@color/colorWhite"
+        android:textAlignment="center"
+        android:text="@string/filtersTopic"/>
 
     <androidx.viewpager.widget.ViewPager
         android:id="@+id/pager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@+id/navbar"
         android:layout_below="@+id/tabs" />
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/tabs"
+        android:layout_below="@+id/filtersTopic"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
