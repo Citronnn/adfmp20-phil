@@ -18,6 +18,18 @@ abstract class DTOFactory<Key, T> {
         return saved[key]!!
     }
 
+    fun tryGet(key: Key): T? {
+        return saved[key]
+    }
+
+    fun getOrSql(key: Key, sql: String, db: SQLiteDatabase): T {
+        tryGet(key)?.let { return it }
+        db.rawQuery(sql, null).use { c ->
+            c.moveToFirst()
+            return createOrGet(c, db)
+        }
+    }
+
     fun getList(c: Cursor, db: SQLiteDatabase): ArrayList<T> {
         val data = ArrayList<T>()
         if (c.moveToFirst()) {

@@ -41,12 +41,80 @@ class Database(val context: Context) :
 
     fun getOnePhilosopher(wikiPageId: Int): Philosopher {
         val db = readableDatabase
-        db.rawQuery(
-            "SELECT ${Philosopher.COLUMNS} FROM Philosopher WHERE wikiPageId = $wikiPageId", null
-        ).use { c ->
-            c.moveToFirst()
-            return Philosopher.factory.createOrGet(c, db)
-        }
+        return Philosopher.factory.getOrSql(
+            wikiPageId,
+            "SELECT ${Philosopher.COLUMNS} FROM Philosopher WHERE wikiPageId = $wikiPageId",
+            db
+        )
+    }
+
+    fun getAllSchools(): ArrayList<PhilosophicalSchool> {
+        val db = readableDatabase
+        db.rawQuery("SELECT ${PhilosophicalSchool.COLUMNS} FROM ${PhilosophicalSchool.TABLE}", null)
+            .use { c ->
+                return PhilosophicalSchool.factory.getList(c, db)
+            }
+    }
+
+    fun getOneSchool(name: String): PhilosophicalSchool {
+        val db = readableDatabase
+        return PhilosophicalSchool.factory.getOrSql(
+            name,
+            "SELECT ${PhilosophicalSchool.COLUMNS} FROM ${PhilosophicalSchool.TABLE} WHERE philosophicalSchool = $name",
+            db
+        )
+    }
+
+    fun getAllIdeas(): ArrayList<NotableIdea> {
+        val db = readableDatabase
+        db.rawQuery("SELECT ${NotableIdea.COLUMNS} FROM ${NotableIdea.TABLE}", null)
+            .use { c ->
+                return NotableIdea.factory.getList(c, db)
+            }
+    }
+
+    fun getOneIdea(name: String): NotableIdea {
+        val db = readableDatabase
+        return NotableIdea.factory.getOrSql(
+            name,
+            "SELECT ${NotableIdea.COLUMNS} FROM ${NotableIdea.TABLE} WHERE notableIdea = $name",
+            db
+        )
+    }
+
+    fun getAllInterests(): ArrayList<MainInterest> {
+        val db = readableDatabase
+        db.rawQuery("SELECT ${MainInterest.COLUMNS} FROM ${MainInterest.TABLE}", null)
+            .use { c ->
+                return MainInterest.factory.getList(c, db)
+            }
+    }
+
+
+    fun getOneInterest(name: String): MainInterest {
+        val db = readableDatabase
+        return MainInterest.factory.getOrSql(
+            name,
+            "SELECT ${MainInterest.COLUMNS} FROM ${MainInterest.TABLE} WHERE mainInterest = $name",
+            db
+        )
+    }
+
+    fun getAllEras(): ArrayList<Era> {
+        val db = readableDatabase
+        db.rawQuery("SELECT ${Era.COLUMNS} FROM ${Era.TABLE}", null)
+            .use { c ->
+                return Era.factory.getList(c, db)
+            }
+    }
+
+    fun getOneEra(name: String): Era {
+        val db = readableDatabase
+        return Era.factory.getOrSql(
+            name,
+            "SELECT ${Era.COLUMNS} FROM ${Era.TABLE} WHERE era = $name",
+            db
+        )
     }
 
     companion object {

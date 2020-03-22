@@ -57,6 +57,20 @@ data class Era(
         db = db
     )
 
+    val philosophers: ArrayList<Philosopher> by lazy {
+        db.rawQuery(
+            """
+            SELECT ${Philosopher.COLUMNS} FROM ${Philosopher.TABLE}
+            WHERE wikiPageID IN (
+                SELECT philosopher_wikiPageID FROM ${Philosopher.TABLE_ERA}
+                WHERE era = "$name"
+            )
+        """.trimIndent(), null
+        ).use { c ->
+            Philosopher.factory.getList(c, db)
+        }
+    }
+
     companion object {
         const val TABLE = "Era"
         const val COLUMNS = "era, abstract, wikiPageId"
@@ -88,6 +102,20 @@ data class MainInterest(
         wikiPageId = c.getIntOrNull(2),
         db = db
     )
+
+    val philosophers: ArrayList<Philosopher> by lazy {
+        db.rawQuery(
+            """
+            SELECT ${Philosopher.COLUMNS} FROM ${Philosopher.TABLE}
+            WHERE wikiPageID IN (
+                SELECT philosopher_wikiPageID FROM ${Philosopher.TABLE_INTEREST}
+                WHERE mainInterest = "$name"
+            )
+        """.trimIndent(), null
+        ).use { c ->
+            Philosopher.factory.getList(c, db)
+        }
+    }
 
     companion object {
         const val TABLE = "mainInterest"
@@ -122,6 +150,20 @@ data class PhilosophicalSchool(
         wikiPageId = c.getIntOrNull(2),
         db = db
     )
+
+    val philosophers: ArrayList<Philosopher> by lazy {
+        db.rawQuery(
+            """
+            SELECT ${Philosopher.COLUMNS} FROM ${Philosopher.TABLE}
+            WHERE wikiPageID IN (
+                SELECT philosopher_wikiPageID FROM ${Philosopher.TABLE_SCHOOLS}
+                WHERE philosophicalSchool = "$name"
+            )
+        """.trimIndent(), null
+        ).use { c ->
+            Philosopher.factory.getList(c, db)
+        }
+    }
 
     companion object {
         const val TABLE = "PhilosophicalSchool"
@@ -181,13 +223,26 @@ data class NotableIdea(
     override val abstract: String?,
     override val db: SQLiteDatabase
 ) : WikiObject() {
-
     constructor(c: Cursor, db: SQLiteDatabase) : this(
         name = c.getString(0),
         abstract = c.getStringOrNull(1),
         wikiPageId = c.getIntOrNull(2),
         db = db
     )
+
+    val philosophers: ArrayList<Philosopher> by lazy {
+        db.rawQuery(
+            """
+            SELECT ${Philosopher.COLUMNS} FROM ${Philosopher.TABLE}
+            WHERE wikiPageID IN (
+                SELECT philosopher_wikiPageID FROM ${Philosopher.TABLE_IDEAS}
+                WHERE notableIdea = "$name"
+            )
+        """.trimIndent(), null
+        ).use { c ->
+            Philosopher.factory.getList(c, db)
+        }
+    }
 
     companion object {
         const val TABLE = "notableIdea"

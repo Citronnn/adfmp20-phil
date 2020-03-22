@@ -38,6 +38,7 @@ class DataBaseInstrumentedTest {
         val context = InstrumentationRegistry.getInstrumentation().targetContext
         val db = Database(context)
         val phil = db.getOnePhilosopher(ARISTOTLE_ID)
+        assertEquals(phil, db.getOnePhilosopher(ARISTOTLE_ID))
         assertNotNull(phil.name)
 
         val influenced = phil.influencedOn
@@ -55,5 +56,48 @@ class DataBaseInstrumentedTest {
         assertTrue(phil.eras.size > 0)
         assertTrue(phil.wikiPagePopularity > 0)
         assertNotNull(phil.nationalities)
+
+        phil.notableIdeas.forEach { it ->
+            assertTrue(it.philosophers.any {
+                it.wikiPageId == ARISTOTLE_ID
+            })
+        }
+        phil.mainInterests.forEach { it ->
+            assertTrue(it.philosophers.any {
+                it.wikiPageId == ARISTOTLE_ID
+            })
+        }
+        phil.schools.forEach { it ->
+            assertTrue(it.philosophers.any {
+                it.wikiPageId == ARISTOTLE_ID
+            })
+        }
+        phil.eras.forEach { it ->
+            assertTrue(it.philosophers.any {
+                it.wikiPageId == ARISTOTLE_ID
+            })
+        }
+    }
+
+    @Test
+    fun testOtherStuff() {
+        val context = InstrumentationRegistry.getInstrumentation().targetContext
+        val db = Database(context)
+
+        val eras = db.getAllEras()
+        assertTrue(eras.size > 0)
+        assertEquals(eras[0], db.getOneEra(eras[0].name))
+
+        val ideas = db.getAllIdeas()
+        assertTrue(ideas.size > 0)
+        assertEquals(ideas[0], db.getOneIdea(ideas[0].name))
+
+        val schools = db.getAllSchools()
+        assertTrue(schools.size > 0)
+        assertEquals(schools[0], db.getOneSchool(schools[0].name))
+
+        val interests = db.getAllInterests()
+        assertTrue(interests.size > 0)
+        assertEquals(interests[0], db.getOneInterest(interests[0].name))
     }
 }
