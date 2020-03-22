@@ -47,5 +47,13 @@ class DataBaseInstrumentedTest {
         })
 
         assertTrue(phil.notableIdeas.size > 0)
+        assertTrue(phil.names.size > 0)
+        assertTrue(phil.wasBorn.size > 0)
+        assertTrue(phil.died.size > 0)
+        assertTrue(phil.mainInterests.size > 0)
+        assertTrue(phil.schools.size > 0)
+        assertTrue(phil.eras.size > 0)
+        assertTrue(phil.wikiPagePopularity > 0)
+        assertNotNull(phil.nationalities)
     }
 }

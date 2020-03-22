@@ -34,15 +34,9 @@ class Database(val context: Context) :
 
     fun getAllPhilosophers(): ArrayList<Philosopher> {
         val db = readableDatabase
-        val data = ArrayList<Philosopher>()
         db.rawQuery("SELECT ${Philosopher.COLUMNS} FROM Philosopher", null).use { c ->
-            if (c.moveToFirst()) {
-                do {
-                    data.add(Philosopher(c, db))
-                } while (c.moveToNext())
-            }
+            return Philosopher.factory.getList(c, db)
         }
-        return data
     }
 
     fun getOnePhilosopher(wikiPageId: Int): Philosopher {
@@ -51,7 +45,7 @@ class Database(val context: Context) :
             "SELECT ${Philosopher.COLUMNS} FROM Philosopher WHERE wikiPageId = $wikiPageId", null
         ).use { c ->
             c.moveToFirst()
-            return Philosopher(c, db)
+            return Philosopher.factory.createOrGet(c, db)
         }
     }
 
