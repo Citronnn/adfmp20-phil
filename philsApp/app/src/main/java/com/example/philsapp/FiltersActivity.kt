@@ -31,7 +31,7 @@ class FiltersActivity : AppCompatActivity() {
     }
     object SearchResults {
         var wordForSearch = ""
-        var countResults = 0
+        var countResults = 30
         var selectedVariant = 0
         var listVariants = arrayListOf<Any>()
     }

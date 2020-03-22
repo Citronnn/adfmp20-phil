@@ -8,6 +8,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Filter
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
@@ -20,19 +21,29 @@ class NodeInfo (val text: String,
 class MainActivity : AppCompatActivity() {
     val TAG = "kek"
     var nodeCount = 0
+
     val nodes = listOf(
-        NodeInfo("Философ", "phil"),
-        NodeInfo("Философ2", "school"),
         NodeInfo("Школа1", "school"),
+        NodeInfo("Философ", "phil"),
+        NodeInfo("Философ2", "phil"),
         NodeInfo("Понятие1", "meaning"),
         NodeInfo("Понятие2", "meaning"),
         NodeInfo("Понятие3", "meaning"),
         NodeInfo("Понятие4", "meaning")
     )
+    object ForSearchResults {
+        var selectedNode = 0
+    }
 
     fun createGraph() {
         val graphView = findViewById<GraphView>(R.id.graph)
         // example tree
+        graphView.setOnItemClickListener { parent, view, position, id ->
+            ForSearchResults.selectedNode = position
+            Log.d(TAG, ForSearchResults.selectedNode.toString())
+            val myIntent = Intent(this, InfoCardActivity::class.java)
+            startActivityForResult(myIntent, 4)
+        }
         val graph = Graph()
         val a = Node(getNodeText())
         val b = Node(getNodeText())
@@ -41,12 +52,12 @@ class MainActivity : AppCompatActivity() {
         val e = Node(getNodeText())
         val f = Node(getNodeText())
         val g = Node(getNodeText())
-        graph.addEdge(c, a)
-        graph.addEdge(c, b)
-        graph.addEdge(a, d)
-        graph.addEdge(a, e)
-        graph.addEdge(a, f)
-        graph.addEdge(a, g)
+        graph.addEdge(a, b)
+        graph.addEdge(a, c)
+        graph.addEdge(b, d)
+        graph.addEdge(b, e)
+        graph.addEdge(b, f)
+        graph.addEdge(b, g)
         // you can set the graph via the constructor or use the adapter.setGraph(Graph) method
         val adapter: BaseGraphAdapter<ViewHolder?> = object : BaseGraphAdapter<ViewHolder?>(graph) {
             override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -91,7 +102,13 @@ class MainActivity : AppCompatActivity() {
         when (resultCode) {
             1 -> Log.d(TAG, data.getStringExtra("filters"))
             2 -> Log.d(TAG, data.getStringExtra("filters"))
-            3 -> Log.d(TAG, data.getStringExtra("search"))
+            3 -> {
+                Log.d(TAG, data.getStringExtra("search"))
+                layoutForSearch.visibility = View.VISIBLE
+                textSearchCurrentId.text = (FiltersActivity.SearchResults.selectedVariant + 1).toString()
+                textSearchAllCount.text = FiltersActivity.SearchResults.countResults.toString()
+            }
+            4 -> Log.d(TAG, data.getStringExtra("data"))
             else -> Log.d(TAG, "другой")
         }
     }
@@ -103,15 +120,38 @@ class MainActivity : AppCompatActivity() {
             Log.d(TAG, "filters")
             val myIntent = Intent(this, FiltersActivity::class.java)
             startActivityForResult(myIntent, 1)
+            layoutForSearch.visibility = View.GONE
         }
         gotoLine.setOnClickListener{
             Log.d(TAG, "time line")
-            Log.d(TAG, FiltersActivity.Filters.phils.toString())
             val myIntent = Intent(this, TimeLineActivity::class.java)
             startActivityForResult(myIntent, 2)
+            layoutForSearch.visibility = View.GONE
+        }
+        buttonSearchLeft.setOnClickListener {
+            when(FiltersActivity.SearchResults.selectedVariant) {
+                0 -> FiltersActivity.SearchResults.selectedVariant = FiltersActivity.SearchResults.countResults - 1
+                else -> FiltersActivity.SearchResults.selectedVariant--
+            }
+            textSearchCurrentId.text = (FiltersActivity.SearchResults.selectedVariant + 1).toString()
+        }
+        buttonSearchRight.setOnClickListener {
+            when(FiltersActivity.SearchResults.selectedVariant) {
+                FiltersActivity.SearchResults.countResults - 1 -> FiltersActivity.SearchResults.selectedVariant = 0
+                else -> FiltersActivity.SearchResults.selectedVariant++
+            }
+            textSearchCurrentId.text = (FiltersActivity.SearchResults.selectedVariant + 1).toString()
+        }
+        buttonSearchClose.setOnClickListener {
+            layoutForSearch.visibility = View.GONE
+            FiltersActivity.SearchResults.wordForSearch = ""
+            FiltersActivity.SearchResults.countResults = 0
+            FiltersActivity.SearchResults.selectedVariant = 0
+            FiltersActivity.SearchResults.listVariants = arrayListOf<Any>()
         }
         Log.d(TAG,"startQWQW")
         createGraph()
+
     }
 
     private fun getNodeText(): String {
