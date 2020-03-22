@@ -11,7 +11,14 @@ class InfoCardActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_info_card)
-        titleContent.text = MainActivity().nodes[MainActivity.ForSearchResults.selectedNode].text
+        var onlyHead = false
+        if (MainActivity.ForSearchResults.fromActivity === "graph") {
+            titleContent.text = MainActivity().nodes[MainActivity.ForSearchResults.selectedNode].text
+            if (MainActivity().nodes[MainActivity.ForSearchResults.selectedNode].type != "phil") onlyHead = true
+        } else {
+            titleContent.text = MainActivity.ForSearchResults.selectedPhil.name
+            if (MainActivity.ForSearchResults.selectedPhil.type != "phil") onlyHead = true
+        }
         abstractContent.text = "Краткое описание"
         wikiContent.text = "qwe.ru"
         ratingWikiContent.text = "155"
@@ -28,7 +35,7 @@ class InfoCardActivity : AppCompatActivity() {
         interestsPhil.text = "Интерес1, Интерес2"
         schoolsPhil.text = "Школа1, Школа2"
         Log.d("kek", "qweqwe ${MainActivity.ForSearchResults.selectedNode} ${MainActivity().nodes[MainActivity.ForSearchResults.selectedNode].type}")
-        if (MainActivity().nodes[MainActivity.ForSearchResults.selectedNode].type != "phil") {
+        if (onlyHead) {
             layoutForGender.visibility = View.GONE
             layoutForBirthDay.visibility = View.GONE
             layoutForDeathDay.visibility = View.GONE

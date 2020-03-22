@@ -15,6 +15,7 @@ import androidx.cardview.widget.CardView
 import de.blox.graphview.*
 import de.blox.graphview.energy.FruchtermanReingoldAlgorithm
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.search_bar.*
 
 class NodeInfo (val text: String,
                 val type: String)
@@ -33,6 +34,8 @@ class MainActivity : AppCompatActivity() {
     )
     object ForSearchResults {
         var selectedNode = 0
+        lateinit var selectedPhil: Phil
+        var fromActivity = "graph"
     }
 
     fun createGraph() {
@@ -40,6 +43,8 @@ class MainActivity : AppCompatActivity() {
         // example tree
         graphView.setOnItemClickListener { parent, view, position, id ->
             ForSearchResults.selectedNode = position
+            ForSearchResults.fromActivity = "graph"
+            clearSearchResults()
             Log.d(TAG, ForSearchResults.selectedNode.toString())
             val myIntent = Intent(this, InfoCardActivity::class.java)
             startActivityForResult(myIntent, 4)
@@ -126,7 +131,7 @@ class MainActivity : AppCompatActivity() {
             Log.d(TAG, "time line")
             val myIntent = Intent(this, TimeLineActivity::class.java)
             startActivityForResult(myIntent, 2)
-            layoutForSearch.visibility = View.GONE
+            clearSearchResults()
         }
         buttonSearchLeft.setOnClickListener {
             when(FiltersActivity.SearchResults.selectedVariant) {
@@ -143,17 +148,19 @@ class MainActivity : AppCompatActivity() {
             textSearchCurrentId.text = (FiltersActivity.SearchResults.selectedVariant + 1).toString()
         }
         buttonSearchClose.setOnClickListener {
-            layoutForSearch.visibility = View.GONE
-            FiltersActivity.SearchResults.wordForSearch = ""
-            FiltersActivity.SearchResults.countResults = 0
-            FiltersActivity.SearchResults.selectedVariant = 0
-            FiltersActivity.SearchResults.listVariants = arrayListOf<Any>()
+            clearSearchResults()
         }
         Log.d(TAG,"startQWQW")
         createGraph()
 
     }
-
+    fun clearSearchResults() {
+        layoutForSearch.visibility = View.GONE
+        FiltersActivity.SearchResults.wordForSearch = ""
+        FiltersActivity.SearchResults.countResults = 0
+        FiltersActivity.SearchResults.selectedVariant = 0
+        FiltersActivity.SearchResults.listVariants = arrayListOf<Any>()
+    }
     private fun getNodeText(): String {
         nodeCount++
         return nodes[nodeCount-1].text

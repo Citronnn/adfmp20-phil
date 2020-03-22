@@ -14,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.activity_time_line.*
+import kotlinx.android.synthetic.main.search_bar.*
 import xyz.sangcomz.stickytimelineview.RecyclerSectionItemDecoration
 import xyz.sangcomz.stickytimelineview.TimeLineRecyclerView
 import xyz.sangcomz.stickytimelineview.model.SectionInfo
@@ -28,7 +29,13 @@ class TimeLineActivity : AppCompatActivity(), OnItemClickListener {
         if (data == null) return
         when(resultCode) {
             1 -> Log.d(TAG, data.getStringExtra("filters"))
-            3 -> Log.d(TAG, data.getStringExtra("search"))
+            3 -> {
+                Log.d(TAG, data.getStringExtra("search"))
+                layoutForSearch.visibility = View.VISIBLE
+                textSearchCurrentId.text = (FiltersActivity.SearchResults.selectedVariant + 1).toString()
+                textSearchAllCount.text = FiltersActivity.SearchResults.countResults.toString()
+            }
+            4 -> Log.d(TAG, data.getStringExtra("data"))
             else -> Log.d(TAG, "другой")
         }
     }
@@ -42,9 +49,27 @@ class TimeLineActivity : AppCompatActivity(), OnItemClickListener {
         }
         gotoGraph.setOnClickListener{
             Log.d(TAG, "graph")
+            clearSearchResults()
             intent.putExtra("filters", "qweqwe")
             setResult(2, intent)
             finish()
+        }
+        buttonSearchLeft.setOnClickListener {
+            when(FiltersActivity.SearchResults.selectedVariant) {
+                0 -> FiltersActivity.SearchResults.selectedVariant = FiltersActivity.SearchResults.countResults - 1
+                else -> FiltersActivity.SearchResults.selectedVariant--
+            }
+            textSearchCurrentId.text = (FiltersActivity.SearchResults.selectedVariant + 1).toString()
+        }
+        buttonSearchRight.setOnClickListener {
+            when(FiltersActivity.SearchResults.selectedVariant) {
+                FiltersActivity.SearchResults.countResults - 1 -> FiltersActivity.SearchResults.selectedVariant = 0
+                else -> FiltersActivity.SearchResults.selectedVariant++
+            }
+            textSearchCurrentId.text = (FiltersActivity.SearchResults.selectedVariant + 1).toString()
+        }
+        buttonSearchClose.setOnClickListener {
+            clearSearchResults()
         }
         val recyclerView: TimeLineRecyclerView = findViewById(R.id.recycler_view)
 
@@ -62,8 +87,20 @@ class TimeLineActivity : AppCompatActivity(), OnItemClickListener {
             philsList,
             R.layout.recycler_row, this)
     }
+    fun clearSearchResults() {
+        layoutForSearch.visibility = View.GONE
+        FiltersActivity.SearchResults.wordForSearch = ""
+        FiltersActivity.SearchResults.countResults = 0
+        FiltersActivity.SearchResults.selectedVariant = 0
+        FiltersActivity.SearchResults.listVariants = arrayListOf<Any>()
+    }
     override fun onItemClicked(user: Phil) {
         Log.d("kek", user.name)
+        MainActivity.ForSearchResults.selectedPhil = user
+        MainActivity.ForSearchResults.fromActivity = "timeline"
+        clearSearchResults()
+        val myIntent = Intent(this, InfoCardActivity::class.java)
+        startActivityForResult(myIntent, 4)
     }
     private fun getPhilsList(): List<Phil> = PhilsRepo().philsList
 
