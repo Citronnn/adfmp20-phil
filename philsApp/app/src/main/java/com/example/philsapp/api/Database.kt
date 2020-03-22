@@ -35,24 +35,24 @@ class Database(val context: Context) :
     fun getAllPhilosophers(): ArrayList<Philosopher> {
         val db = readableDatabase
         val data = ArrayList<Philosopher>()
-        db.rawQuery("SELECT * FROM Philosopher", null).use { c ->
+        db.rawQuery("SELECT ${Philosopher.COLUMNS} FROM Philosopher", null).use { c ->
             if (c.moveToFirst()) {
                 do {
-                    data.add(
-                        Philosopher(
-                            wikiPageId = c.getInt(0),
-                            abstract = c.getString(1),
-                            gender = c.getString(2),
-                            birthDate = c.getString(3),
-                            deathDate = c.getString(4),
-                            name = c.getString(5),
-                            db = db
-                        )
-                    )
+                    data.add(Philosopher(c, db))
                 } while (c.moveToNext())
             }
         }
         return data
+    }
+
+    fun getOnePhilosopher(wikiPageId: Int): Philosopher {
+        val db = readableDatabase
+        db.rawQuery(
+            "SELECT ${Philosopher.COLUMNS} FROM Philosopher WHERE wikiPageId = $wikiPageId", null
+        ).use { c ->
+            c.moveToFirst()
+            return Philosopher(c, db)
+        }
     }
 
     companion object {
