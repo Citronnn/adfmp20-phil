@@ -5,13 +5,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".TimeLineActivity">
-    <TextView
-        android:id="@+id/textView3"
-        android:layout_width="39dp"
-        android:layout_height="10dp"
-        android:text="Линия"
-        tools:layout_editor_absoluteX="166dp"
-        tools:layout_editor_absoluteY="280dp" />
+    <xyz.sangcomz.stickytimelineview.TimeLineRecyclerView
+        android:id="@+id/recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/gotoGraph"

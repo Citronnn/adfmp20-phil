@@ -26,6 +26,7 @@ android {
 }
 
 dependencies {
+    implementation 'com.github.sangcomz:StickyTimeLine:v0.0.20'
     implementation 'com.appyvet:materialrangebar:1.4.7'
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
