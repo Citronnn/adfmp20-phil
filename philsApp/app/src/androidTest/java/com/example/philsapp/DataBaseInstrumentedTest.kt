@@ -3,8 +3,8 @@ package com.example.philsapp
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import com.example.philsapp.api.Database
+import junit.framework.Assert.assertNotNull
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.junit.runner.RunWith
 
@@ -23,6 +23,9 @@ class DataBaseInstrumentedTest {
         val context = InstrumentationRegistry.getInstrumentation().targetContext
         val db = Database(context)
         val data = db.getAllPhilosophers()
-        assertTrue(data.size > 0)
+        data.forEach { it ->
+            assertNotNull(it.name)
+            assertNotNull(it.wikiPageId)
+        }
     }
 }
