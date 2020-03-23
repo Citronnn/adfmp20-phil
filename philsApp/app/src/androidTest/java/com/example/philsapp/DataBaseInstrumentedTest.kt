@@ -2,7 +2,7 @@ package com.example.philsapp
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
-import com.example.philsapp.api.Database
+import com.example.philsapp.api.*
 import junit.framework.Assert.assertNotNull
 import junit.framework.Assert.assertTrue
 import org.junit.Assert.assertEquals
@@ -99,5 +99,57 @@ class DataBaseInstrumentedTest {
         val interests = db.getAllInterests()
         assertTrue(interests.size > 0)
         assertEquals(interests[0], db.getOneInterest(interests[0].name))
+    }
+
+    @Test
+    fun testFilter() {
+        val context = InstrumentationRegistry.getInstrumentation().targetContext
+        val db = Database(context)
+        assertEquals(db.getAllPhilosophers(Filter(limit = 10)).size, 10)
+        assertEquals(db.getAllPhilosophers(Filter(limit = 15, offset = 10)).size, 15)
+        assertTrue(
+            db.getAllPhilosophers(
+                Filter(
+                    order = arrayOf(
+                        OrderBy(
+                            "name",
+                            Order.ASC
+                        )
+                    )
+                )
+            ).size > 0
+        )
+        assertTrue(
+            db.getAllPhilosophers(
+                Filter(
+                    order = arrayOf(
+                        OrderBy("name", Order.ASC),
+                        OrderBy("birthDate", Order.DESC)
+                    )
+                )
+            ).size > 0
+        )
+
+        assertTrue(
+            db.getAllPhilosophers(
+                Filter(filter = arrayOf(FilterBy("name", Operator.CONTAINS, "Aristotle")))
+            ).size > 0
+        )
+        assertEquals(
+            db.getAllPhilosophers(
+                Filter(filter = arrayOf(FilterBy("name", Operator.CONTAINS, "Vladimir Ivanov")))
+            ).size, 0
+        )
+        // assertEquals(
+        //     db.getAllPhilosophers(
+        //         Filter(filter=arrayOf(FilterBy("birthDate", Operator.GT, "'3000-01-01'")))
+        //     ).size, 0
+        // )
+        // assertEquals(
+        //     db.getAllPhilosophers(
+        //         Filter(filter=arrayOf(FilterBy("birthDate", Operator.LT, "'3000-01-01'")))
+        //     ).size,
+        //     db.getAllPhilosophers().size
+        // )
     }
 }
