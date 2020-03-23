@@ -267,6 +267,7 @@ class MainActivity : AppCompatActivity() {
         }
         buttonSearchClose.setOnClickListener {
             clearSearchResults()
+            createGraph(false)
         }
         Log.d(TAG,"startQWQW")
         createGraph(false)
