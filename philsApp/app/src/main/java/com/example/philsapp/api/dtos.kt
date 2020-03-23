@@ -423,7 +423,7 @@ data class Philosopher(
     }
 
     companion object {
-        const val COLUMNS = "wikiPageID, abstract, gender, birthDate, deathDate, name"
+        const val COLUMNS = "wikiPageID, abstract, gender, date(birthDate), date(deathDate), name"
         const val TABLE = "Philosopher"
         const val TABLE_INFLUENCED = "PhilosopherInfluenced"
         const val TABLE_IDEAS = "PhilopherHasNotableIdea"

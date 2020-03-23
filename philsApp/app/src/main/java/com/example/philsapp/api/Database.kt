@@ -11,7 +11,10 @@ import java.io.FileOutputStream
 class Database(val context: Context) :
     SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
     init {
-        copyDataBase()
+        if (!DB_COPIED) {
+            copyDataBase()
+            DB_COPIED = true
+        }
     }
 
     private fun copyDataBase() {
@@ -32,9 +35,10 @@ class Database(val context: Context) :
     override fun onUpgrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {
     }
 
-    fun getAllPhilosophers(): ArrayList<Philosopher> {
+    fun getAllPhilosophers(filter: Filter? = null): ArrayList<Philosopher> {
         val db = readableDatabase
-        db.rawQuery("SELECT ${Philosopher.COLUMNS} FROM Philosopher", null).use { c ->
+        db.rawQuery("SELECT ${Philosopher.COLUMNS} FROM Philosopher ${filter?.toSql() ?: ""}", null)
+            .use { c ->
             return Philosopher.factory.getList(c, db)
         }
     }
@@ -48,9 +52,12 @@ class Database(val context: Context) :
         )
     }
 
-    fun getAllSchools(): ArrayList<PhilosophicalSchool> {
+    fun getAllSchools(filter: Filter? = null): ArrayList<PhilosophicalSchool> {
         val db = readableDatabase
-        db.rawQuery("SELECT ${PhilosophicalSchool.COLUMNS} FROM ${PhilosophicalSchool.TABLE}", null)
+        db.rawQuery(
+            "SELECT ${PhilosophicalSchool.COLUMNS} FROM ${PhilosophicalSchool.TABLE} ${filter?.toSql()
+                ?: ""}", null
+        )
             .use { c ->
                 return PhilosophicalSchool.factory.getList(c, db)
             }
@@ -65,9 +72,11 @@ class Database(val context: Context) :
         )
     }
 
-    fun getAllIdeas(): ArrayList<NotableIdea> {
+    fun getAllIdeas(filter: Filter? = null): ArrayList<NotableIdea> {
         val db = readableDatabase
-        db.rawQuery("SELECT ${NotableIdea.COLUMNS} FROM ${NotableIdea.TABLE}", null)
+        db.rawQuery(
+            "SELECT ${NotableIdea.COLUMNS} FROM ${NotableIdea.TABLE} ${filter?.toSql() ?: ""}", null
+        )
             .use { c ->
                 return NotableIdea.factory.getList(c, db)
             }
@@ -82,9 +91,12 @@ class Database(val context: Context) :
         )
     }
 
-    fun getAllInterests(): ArrayList<MainInterest> {
+    fun getAllInterests(filter: Filter? = null): ArrayList<MainInterest> {
         val db = readableDatabase
-        db.rawQuery("SELECT ${MainInterest.COLUMNS} FROM ${MainInterest.TABLE}", null)
+        db.rawQuery(
+            "SELECT ${MainInterest.COLUMNS} FROM ${MainInterest.TABLE} ${filter?.toSql() ?: ""}",
+            null
+        )
             .use { c ->
                 return MainInterest.factory.getList(c, db)
             }
@@ -100,9 +112,9 @@ class Database(val context: Context) :
         )
     }
 
-    fun getAllEras(): ArrayList<Era> {
+    fun getAllEras(filter: Filter? = null): ArrayList<Era> {
         val db = readableDatabase
-        db.rawQuery("SELECT ${Era.COLUMNS} FROM ${Era.TABLE}", null)
+        db.rawQuery("SELECT ${Era.COLUMNS} FROM ${Era.TABLE} ${filter?.toSql() ?: ""}", null)
             .use { c ->
                 return Era.factory.getList(c, db)
             }
@@ -121,5 +133,7 @@ class Database(val context: Context) :
         var DATABASE_NAME = "db.sqlite"
         var DATABASE_VERSION = 1
         var TAG = "Database"
+
+        var DB_COPIED = false
     }
 }
