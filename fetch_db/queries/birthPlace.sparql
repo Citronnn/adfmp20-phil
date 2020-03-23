@@ -1,0 +1,12 @@
+SELECT * WHERE {
+?object a <http://dbpedia.org/ontology/Philosopher> .
+OPTIONAL {?object dbo:wikiPageID ?wikiPageID} .
+OPTIONAL {
+    ?object dbo:birthPlace ?birthPlace .
+    ?birthPlace dbo:wikiPageID ?birthPlace_wikiPageID .
+}
+OPTIONAL {
+    ?object dbo:deathPlace ?deathPlace .
+    ?deathPlace dbo:wikiPageID ?deathPlace_wikiPageID .
+}
+} ORDER BY ASC(?object)
