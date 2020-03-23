@@ -13,8 +13,8 @@ class InfoCardActivity : AppCompatActivity() {
         setContentView(R.layout.activity_info_card)
         var onlyHead = false
         if (MainActivity.ForSearchResults.fromActivity === "graph") {
-            titleContent.text = MainActivity().nodes[MainActivity.ForSearchResults.selectedNode].text
-            if (MainActivity().nodes[MainActivity.ForSearchResults.selectedNode].type != "phil") onlyHead = true
+            titleContent.text = MainActivity.Nodes.nodesInfo[MainActivity.ForSearchResults.selectedNode].text
+            if (MainActivity.Nodes.nodesInfo[MainActivity.ForSearchResults.selectedNode].type != "phil") onlyHead = true
         } else {
             titleContent.text = MainActivity.ForSearchResults.selectedPhil.name
             if (MainActivity.ForSearchResults.selectedPhil.type != "phil") onlyHead = true
@@ -34,8 +34,7 @@ class InfoCardActivity : AppCompatActivity() {
         ideasPhil.text = "Идея1, Идея2"
         interestsPhil.text = "Интерес1, Интерес2"
         schoolsPhil.text = "Школа1, Школа2"
-        Log.d("kek", "qweqwe ${MainActivity.ForSearchResults.selectedNode} ${MainActivity().nodes[MainActivity.ForSearchResults.selectedNode].type}")
-        if (onlyHead) {
+       if (onlyHead) {
             layoutForGender.visibility = View.GONE
             layoutForBirthDay.visibility = View.GONE
             layoutForDeathDay.visibility = View.GONE

@@ -8,14 +8,18 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Filter
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
+import com.example.philsapp.api.Database
 import de.blox.graphview.*
 import de.blox.graphview.energy.FruchtermanReingoldAlgorithm
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.search_bar.*
+import com.example.philsapp.api.Filter
+import com.example.philsapp.api.FilterBy
+import com.example.philsapp.api.Operator
+import com.otaliastudios.zoom.ZoomApi.Companion.TYPE_ZOOM
 
 class NodeInfo (val text: String,
                 val type: String)
@@ -23,15 +27,10 @@ class MainActivity : AppCompatActivity() {
     val TAG = "kek"
     var nodeCount = 0
 
-    val nodes = listOf(
-        NodeInfo("Школа1", "school"),
-        NodeInfo("Философ", "phil"),
-        NodeInfo("Философ2", "phil"),
-        NodeInfo("Понятие1", "meaning"),
-        NodeInfo("Понятие2", "meaning"),
-        NodeInfo("Понятие3", "meaning"),
-        NodeInfo("Понятие4", "meaning")
-    )
+    object Nodes {
+        var nodesInfo = arrayListOf<NodeInfo>()
+        var nodes = arrayListOf<Node>()
+    }
     object ForSearchResults {
         var selectedNode = 0
         lateinit var selectedPhil: Phil
@@ -50,19 +49,57 @@ class MainActivity : AppCompatActivity() {
             startActivityForResult(myIntent, 4)
         }
         val graph = Graph()
-        val a = Node(getNodeText())
-        val b = Node(getNodeText())
-        val c = Node(getNodeText())
-        val d = Node(getNodeText())
-        val e = Node(getNodeText())
-        val f = Node(getNodeText())
-        val g = Node(getNodeText())
-        graph.addEdge(a, b)
-        graph.addEdge(a, c)
-        graph.addEdge(b, d)
-        graph.addEdge(b, e)
-        graph.addEdge(b, f)
-        graph.addEdge(b, g)
+        val db = Database(this)
+        Nodes.nodesInfo = arrayListOf<NodeInfo>()
+        Nodes.nodes = arrayListOf<Node>()
+        val data = db.getAllPhilosophers(Filter(
+            limit = if (FiltersActivity.Filters.topGT == 1) FiltersActivity.Filters.countGT else 20
+        //    ,filter = arrayOf(FilterBy("birthDate", Operator.GT, FiltersActivity.Filters.yearStart),
+          //      FilterBy("birthDate", Operator.LT, FiltersActivity.Filters.yearEnd))
+        ))
+        var philPos = 0
+        var schoolPos = 0
+        var ideaPos = 0
+        data.forEach { it ->
+            Nodes.nodesInfo.add(NodeInfo(it.name, "phil"))
+            philPos = Nodes.nodesInfo.size - 1
+            Nodes.nodes.add(Node(Nodes.nodesInfo[philPos].text))
+            graph.addNode(Nodes.nodes[philPos])
+            if (FiltersActivity.Filters.schools == 1) {
+                it.schools.forEach {
+                    val indexSchool = Nodes.nodesInfo.indexOf(NodeInfo(it.name, "school"))
+                    if (indexSchool == -1) {
+                        Nodes.nodesInfo.add(NodeInfo(it.name, "school"))
+                        schoolPos = Nodes.nodesInfo.size - 1
+                        Nodes.nodes.add(Node(Nodes.nodesInfo[schoolPos].text))
+                        graph.addNode(Nodes.nodes[schoolPos])
+                    } else {
+                        schoolPos = indexSchool
+                    }
+                    graph.addEdge(Nodes.nodes[schoolPos], Nodes.nodes[philPos])
+                }
+            }
+            if (FiltersActivity.Filters.meanings == 1) {
+                it.notableIdeas.forEach {
+                    val indexSchool = Nodes.nodesInfo.indexOf(NodeInfo(it.name, "meaning"))
+                    if (indexSchool == -1) {
+                        Nodes.nodesInfo.add(NodeInfo(it.name, "meaning"))
+                        ideaPos = Nodes.nodesInfo.size - 1
+                        Nodes.nodes.add(Node(Nodes.nodesInfo[ideaPos].text))
+                        graph.addNode(Nodes.nodes[ideaPos])
+                    } else {
+                        ideaPos = indexSchool
+                    }
+                    graph.addEdge(Nodes.nodes[philPos], Nodes.nodes[ideaPos])
+                }
+            }
+            if(Nodes.nodes.size > 50) {
+                graphView.setMinZoom(10.0F, TYPE_ZOOM)
+            } else if (Nodes.nodes.size > 30) {
+                graphView.setMinZoom(5.0F, TYPE_ZOOM)
+
+            }
+        }
         // you can set the graph via the constructor or use the adapter.setGraph(Graph) method
         val adapter: BaseGraphAdapter<ViewHolder?> = object : BaseGraphAdapter<ViewHolder?>(graph) {
             override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -76,9 +113,7 @@ class MainActivity : AppCompatActivity() {
                 data: Any?,
                 position: Int
             ) {
-                Log.d(TAG, position.toString())
-                Log.d(TAG, nodes[position].type)
-                when (nodes[position].type) {
+                when (Nodes.nodesInfo[position].type) {
                     "phil" -> {
                         (viewHolder as SimpleViewHolder).formView.setBackgroundColor(Color.YELLOW)
                         (viewHolder as SimpleViewHolder).textView.setTextColor(Color.BLACK)
@@ -160,10 +195,6 @@ class MainActivity : AppCompatActivity() {
         FiltersActivity.SearchResults.countResults = 0
         FiltersActivity.SearchResults.selectedVariant = 0
         FiltersActivity.SearchResults.listVariants = arrayListOf<Any>()
-    }
-    private fun getNodeText(): String {
-        nodeCount++
-        return nodes[nodeCount-1].text
     }
 }
 internal class SimpleViewHolder(itemView: View) : ViewHolder(itemView) {

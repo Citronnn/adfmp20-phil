@@ -36,14 +36,8 @@
         android:layout_height="wrap_content"
         android:text="@string/schoolsFilter"/>
     <androidx.appcompat.widget.AppCompatCheckBox
-        android:id="@+id/philsFilter"
-        android:layout_below="@id/schoolsFilter"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/philsFilter"/>
-    <androidx.appcompat.widget.AppCompatCheckBox
         android:id="@+id/meansFilter"
-        android:layout_below="@id/philsFilter"
+        android:layout_below="@id/schoolsFilter"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/meansFilter"/>

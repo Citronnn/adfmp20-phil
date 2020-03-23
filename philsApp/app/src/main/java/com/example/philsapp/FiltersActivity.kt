@@ -20,13 +20,12 @@ class FiltersActivity : AppCompatActivity() {
     private var mSectionsPagerAdapter: SectionsPagerAdapter? = null
     private var mViewPager: ViewPager? = null
     object Filters {
-        var phils = 1
         var schools = 1
         var meanings = 0
-        var countGT = 50
+        var countGT = 20
         var ages = 0
         var topGT = 0
-        var yearStart = -300
+        var yearStart = 300
         var yearEnd = 1000
     }
     object SearchResults {
@@ -48,7 +47,6 @@ class FiltersActivity : AppCompatActivity() {
         return Filters
     }
     fun setFilters(data: FiltersTab.FiltersObject) {
-        Filters.phils = data.phils
         Filters.schools = data.schools
         Filters.countGT = data.countGT
         Filters.meanings = data.meanings
