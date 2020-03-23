@@ -14,8 +14,7 @@
         android:id="@+id/textForSearch"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="0.1"
-        android:text="qwe"/>
+        android:layout_weight="0.1" />
     <ImageButton
         android:id="@+id/buttonForSearch"
         android:src="@drawable/ic_search_black_24dp"
@@ -23,6 +22,13 @@
         android:layout_weight="0.9"
         android:layout_height="wrap_content"/>
 </LinearLayout>
+    <TextView
+        android:id="@+id/noSearchResultsLabel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Результатов не найдено"
+        android:textSize="15sp"
+        android:layout_below="@+id/layoutForSearchField"/>
 <androidx.recyclerview.widget.RecyclerView
     android:layout_below="@+id/layoutForSearchField"
     android:layout_width="match_parent"

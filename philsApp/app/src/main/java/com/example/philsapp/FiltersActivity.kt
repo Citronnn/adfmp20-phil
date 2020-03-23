@@ -10,6 +10,10 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
 import androidx.viewpager.widget.ViewPager
+import com.example.philsapp.api.Era
+import com.example.philsapp.api.NotableIdea
+import com.example.philsapp.api.Philosopher
+import com.example.philsapp.api.PhilosophicalSchool
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayout.TabLayoutOnPageChangeListener
 import kotlinx.android.synthetic.main.activity_filters.*
@@ -30,31 +34,14 @@ class FiltersActivity : AppCompatActivity() {
     }
     object SearchResults {
         var wordForSearch = ""
-        var countResults = 30
+        var countResults = 0
         var selectedVariant = 0
-        var listVariants = arrayListOf<Any>()
+        var listPhils = arrayListOf<Philosopher>()
+        var listSchools = arrayListOf<PhilosophicalSchool>()
+        var listIdeas = arrayListOf<NotableIdea>()
+        var listEras = arrayListOf<Era>()
     }
-    fun getSearch(): SearchResults {
-        return SearchResults
-    }
-    fun setSearchResults(data: SearchTab.SearchResultsObject) {
-        SearchResults.wordForSearch = data.wordForSearch
-        SearchResults.countResults = data.countResults
-        SearchResults.selectedVariant = data.selectedVariant
-        SearchResults.listVariants = data.listVariants
-    }
-    fun getFilters(): Filters {
-        return Filters
-    }
-    fun setFilters(data: FiltersTab.FiltersObject) {
-        Filters.schools = data.schools
-        Filters.countGT = data.countGT
-        Filters.meanings = data.meanings
-        Filters.ages = data.ages
-        Filters.topGT = data.topGT
-        Filters.yearStart = data.yearStart
-        Filters.yearEnd = data.yearEnd
-    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_filters)
@@ -80,14 +67,12 @@ class SectionsPagerAdapter(fm: FragmentManager?) : FragmentPagerAdapter(fm!!) {
 // Return a PlaceholderFragment (defined as a static inner class below).
 //return PlaceholderFragment.newInstance(position + 1);
         return when (position) {
-            0 -> {
-                FiltersTab()
-            }
+            0 -> FiltersTab()
             else -> SearchTab()
         }
     }
 
     override fun getCount(): Int { // Show 3 total pages.
-        return 3
+        return 2
     }
 }

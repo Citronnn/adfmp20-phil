@@ -8,10 +8,12 @@ import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.ListView
+import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.philsapp.api.*
 import kotlinx.android.synthetic.main.search_card_view.view.*
 
 
@@ -21,15 +23,9 @@ import kotlinx.android.synthetic.main.search_card_view.view.*
 class SearchTab : Fragment() {
     private var cards: ArrayList<SearchCard>? = null
     private var rv: RecyclerView? = null
-    val activity = FiltersActivity()
-    object SearchResultsObject {
-        var wordForSearch = ""
-        var countResults = 0
-        var selectedVariant = 0
-        var listVariants = arrayListOf<Any>()
-    }
     fun onCardClickListener(position: Int): Unit {
         Log.d("kek", position.toString())
+        FiltersActivity.SearchResults.selectedVariant = position - 1
         getActivity()?.intent?.putExtra("search", "search")
         getActivity()?.setResult(3, getActivity()?.intent)
         getActivity()?.finish()
@@ -45,24 +41,73 @@ class SearchTab : Fragment() {
         rv!!.setLayoutManager(llm)
         val textForSearch = view.findViewById<EditText>(R.id.textForSearch)
         val buttonForSearch = view.findViewById<ImageButton>(R.id.buttonForSearch)
+        val db = Database(getActivity()!!.applicationContext)
         buttonForSearch.setOnClickListener {
-            SearchResultsObject.wordForSearch = textForSearch.text.toString()
-            activity.setSearchResults(SearchResultsObject)
+            FiltersActivity.SearchResults.wordForSearch = textForSearch.text.toString()
+            FiltersActivity.SearchResults.listPhils = arrayListOf()
+            FiltersActivity.SearchResults.listSchools = arrayListOf()
+            FiltersActivity.SearchResults.listIdeas = arrayListOf()
+            FiltersActivity.SearchResults.listEras = arrayListOf()
+            FiltersActivity.SearchResults.listPhils = db.getAllPhilosophers(
+                Filter(filter = arrayOf(
+                    FilterBy("name", Operator.CONTAINS, FiltersActivity.SearchResults.wordForSearch))
+                )
+            )
+            if (FiltersActivity.Filters.schools == 1) {
+                FiltersActivity.SearchResults.listSchools = db.getAllSchools(
+                    Filter(filter = arrayOf(
+                        FilterBy("philosophicalSchool", Operator.CONTAINS, FiltersActivity.SearchResults.wordForSearch))
+                    )
+                )
+            }
+            if (FiltersActivity.Filters.meanings == 1) {
+
+                FiltersActivity.SearchResults.listIdeas = db.getAllIdeas(
+                    Filter(filter = arrayOf(
+                        FilterBy("notableIdea", Operator.CONTAINS, FiltersActivity.SearchResults.wordForSearch))
+                    )
+                )
+            }
+            if (FiltersActivity.Filters.ages == 1) {
+                FiltersActivity.SearchResults.listEras = db.getAllEras(
+                    Filter(filter = arrayOf(
+                        FilterBy("era", Operator.CONTAINS, FiltersActivity.SearchResults.wordForSearch))
+                    )
+                )
+            }
+            FiltersActivity.SearchResults.countResults = FiltersActivity.SearchResults.listEras.size +
+                    FiltersActivity.SearchResults.listSchools.size +
+                    FiltersActivity.SearchResults.listPhils.size +
+                    FiltersActivity.SearchResults.listIdeas.size
+            initializeData(view)
+            initializeAdapter()
+
         }
-        val data = activity.getSearch()
-        SearchResultsObject.wordForSearch = data.wordForSearch
-        SearchResultsObject.countResults = data.countResults
-        SearchResultsObject.selectedVariant = data.selectedVariant
-        SearchResultsObject.listVariants = data.listVariants
-        initializeData()
+        initializeData(view)
         initializeAdapter()
         return view
     }
-    private fun initializeData() {
+    private fun initializeData(view: View) {
+        val noSearchResultsLabel = view.findViewById<TextView>(R.id.noSearchResultsLabel)
+        noSearchResultsLabel.visibility = View.GONE
+        if (FiltersActivity.SearchResults.countResults == 0) {
+            noSearchResultsLabel.visibility = View.VISIBLE
+        }
         cards = ArrayList<SearchCard>()
-        (cards as ArrayList<SearchCard>).add(SearchCard("Сократ", "Философ", "1234-5322"))
-        (cards as ArrayList<SearchCard>).add(SearchCard("Марксизм", "Школа", null))
-        (cards as ArrayList<SearchCard>).add(SearchCard("Античность", "Эпоха", null))
+        FiltersActivity.SearchResults.listPhils.forEach {
+            Log.d("kek", it.name)
+            (cards as ArrayList<SearchCard>).add(SearchCard((it.name), "Философ",
+                if (it.birthDate != null && it.deathDate != null) "${it.birthDate} - ${it.deathDate}" else "Неизвестно"))
+        }
+        FiltersActivity.SearchResults.listSchools.forEach {
+            (cards as ArrayList<SearchCard>).add(SearchCard((it.name), "Школа", null))
+        }
+        FiltersActivity.SearchResults.listIdeas.forEach {
+            (cards as ArrayList<SearchCard>).add(SearchCard((it.name), "Понятие", null))
+        }
+        FiltersActivity.SearchResults.listEras.forEach {
+            (cards as ArrayList<SearchCard>).add(SearchCard((it.name), "Эра", null))
+        }
     }
 
     private fun initializeAdapter() {

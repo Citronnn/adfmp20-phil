@@ -92,7 +92,10 @@ class TimeLineActivity : AppCompatActivity(), OnItemClickListener {
         FiltersActivity.SearchResults.wordForSearch = ""
         FiltersActivity.SearchResults.countResults = 0
         FiltersActivity.SearchResults.selectedVariant = 0
-        FiltersActivity.SearchResults.listVariants = arrayListOf<Any>()
+        FiltersActivity.SearchResults.listPhils = arrayListOf()
+        FiltersActivity.SearchResults.listSchools = arrayListOf()
+        FiltersActivity.SearchResults.listIdeas = arrayListOf()
+        FiltersActivity.SearchResults.listEras= arrayListOf()
     }
     override fun onItemClicked(user: Phil) {
         Log.d("kek", user.name)

@@ -37,7 +37,7 @@ class MainActivity : AppCompatActivity() {
         var fromActivity = "graph"
     }
 
-    fun createGraph() {
+    fun createGraph(forSearch:Boolean) {
         val graphView = findViewById<GraphView>(R.id.graph)
         // example tree
         graphView.setOnItemClickListener { parent, view, position, id ->
@@ -52,53 +52,130 @@ class MainActivity : AppCompatActivity() {
         val db = Database(this)
         Nodes.nodesInfo = arrayListOf<NodeInfo>()
         Nodes.nodes = arrayListOf<Node>()
-        val data = db.getAllPhilosophers(Filter(
-            limit = if (FiltersActivity.Filters.topGT == 1) FiltersActivity.Filters.countGT else 20
-        //    ,filter = arrayOf(FilterBy("birthDate", Operator.GT, FiltersActivity.Filters.yearStart),
-          //      FilterBy("birthDate", Operator.LT, FiltersActivity.Filters.yearEnd))
-        ))
-        var philPos = 0
-        var schoolPos = 0
-        var ideaPos = 0
-        data.forEach { it ->
-            Nodes.nodesInfo.add(NodeInfo(it.name, "phil"))
-            philPos = Nodes.nodesInfo.size - 1
-            Nodes.nodes.add(Node(Nodes.nodesInfo[philPos].text))
-            graph.addNode(Nodes.nodes[philPos])
-            if (FiltersActivity.Filters.schools == 1) {
-                it.schools.forEach {
-                    val indexSchool = Nodes.nodesInfo.indexOf(NodeInfo(it.name, "school"))
-                    if (indexSchool == -1) {
-                        Nodes.nodesInfo.add(NodeInfo(it.name, "school"))
-                        schoolPos = Nodes.nodesInfo.size - 1
-                        Nodes.nodes.add(Node(Nodes.nodesInfo[schoolPos].text))
-                        graph.addNode(Nodes.nodes[schoolPos])
-                    } else {
-                        schoolPos = indexSchool
+        if (forSearch) {
+            var current = FiltersActivity.SearchResults.selectedVariant
+            var typeForSearch = "phil"
+            if (current > FiltersActivity.SearchResults.listPhils.size - 1) {
+                typeForSearch = "school"
+                current -= FiltersActivity.SearchResults.listPhils.size
+                if (current > FiltersActivity.SearchResults.listPhils.size
+                    + FiltersActivity.SearchResults.listSchools.size - 1) {
+                    typeForSearch = "ideas"
+                    current -= FiltersActivity.SearchResults.listSchools.size
+                    if (current > FiltersActivity.SearchResults.listPhils.size
+                        + FiltersActivity.SearchResults.listSchools.size
+                        + FiltersActivity.SearchResults.listIdeas.size- 1) {
+                        current -= FiltersActivity.SearchResults.listIdeas.size
+                        typeForSearch = "age"
                     }
-                    graph.addEdge(Nodes.nodes[schoolPos], Nodes.nodes[philPos])
                 }
             }
-            if (FiltersActivity.Filters.meanings == 1) {
-                it.notableIdeas.forEach {
-                    val indexSchool = Nodes.nodesInfo.indexOf(NodeInfo(it.name, "meaning"))
-                    if (indexSchool == -1) {
-                        Nodes.nodesInfo.add(NodeInfo(it.name, "meaning"))
-                        ideaPos = Nodes.nodesInfo.size - 1
-                        Nodes.nodes.add(Node(Nodes.nodesInfo[ideaPos].text))
-                        graph.addNode(Nodes.nodes[ideaPos])
-                    } else {
-                        ideaPos = indexSchool
+            when (typeForSearch) {
+                "phil" -> {
+                    val data = FiltersActivity.SearchResults.listPhils[current]
+                    var philPos = 0
+                    var schoolPos = 0
+                    var ideaPos = 0
+                    Nodes.nodesInfo.add(NodeInfo(data.name, "phil"))
+                    philPos = Nodes.nodesInfo.size - 1
+                    Nodes.nodes.add(Node(Nodes.nodesInfo[philPos].text))
+                    graph.addNode(Nodes.nodes[philPos])
+                    if (FiltersActivity.Filters.schools == 1) {
+                        data.schools.forEach {
+                            Nodes.nodesInfo.add(NodeInfo(it.name, "school"))
+                            schoolPos = Nodes.nodesInfo.size - 1
+                            Nodes.nodes.add(Node(Nodes.nodesInfo[schoolPos].text))
+                            graph.addNode(Nodes.nodes[schoolPos])
+                            graph.addEdge(Nodes.nodes[schoolPos], Nodes.nodes[philPos])
+                        }
                     }
-                    graph.addEdge(Nodes.nodes[philPos], Nodes.nodes[ideaPos])
+                    if (FiltersActivity.Filters.meanings == 1) {
+                        data.notableIdeas.forEach {
+                            Nodes.nodesInfo.add(NodeInfo(it.name, "meaning"))
+                            ideaPos = Nodes.nodesInfo.size - 1
+                            Nodes.nodes.add(Node(Nodes.nodesInfo[ideaPos].text))
+                            graph.addNode(Nodes.nodes[ideaPos])
+                            graph.addEdge(Nodes.nodes[philPos], Nodes.nodes[ideaPos])
+                        }
+                    }
+                }
+                "school" -> {
+                    val data = FiltersActivity.SearchResults.listSchools[current]
+                    var philPos = 0
+                    var schoolPos = 0
+                    Nodes.nodesInfo.add(NodeInfo(data.name, "school"))
+                    Nodes.nodes.add(Node(Nodes.nodesInfo[schoolPos].text))
+                    graph.addNode(Nodes.nodes[schoolPos])
+                    data.philosophers.forEach {
+                        Nodes.nodesInfo.add(NodeInfo(it.name, "phil"))
+                        philPos = Nodes.nodesInfo.size - 1
+                        Nodes.nodes.add(Node(Nodes.nodesInfo[philPos].text))
+                        graph.addNode(Nodes.nodes[philPos])
+                        graph.addEdge(Nodes.nodes[schoolPos], Nodes.nodes[philPos])
+                    }
+                }
+                "meaning" -> {
+                    val data = FiltersActivity.SearchResults.listIdeas[current]
+                    Nodes.nodesInfo.add(NodeInfo(data.name, "meaning"))
+                    Nodes.nodes.add(Node(Nodes.nodesInfo[0].text))
+                }
+                "age" -> {
+                    val data = FiltersActivity.SearchResults.listEras[current]
+                    Nodes.nodesInfo.add(NodeInfo(data.name, "age"))
+                    Nodes.nodes.add(Node(Nodes.nodesInfo[0].text))
                 }
             }
-            if(Nodes.nodes.size > 50) {
-                graphView.setMinZoom(10.0F, TYPE_ZOOM)
-            } else if (Nodes.nodes.size > 30) {
-                graphView.setMinZoom(5.0F, TYPE_ZOOM)
-
+        } else {
+            val data = db.getAllPhilosophers(
+                Filter(
+                    limit = if (FiltersActivity.Filters.topGT == 1) FiltersActivity.Filters.countGT else 20
+                    //    ,filter = arrayOf(FilterBy("birthDate", Operator.GT, FiltersActivity.Filters.yearStart),
+                    //      FilterBy("birthDate", Operator.LT, FiltersActivity.Filters.yearEnd))
+                )
+            )
+            var philPos = 0
+            var schoolPos = 0
+            var ideaPos = 0
+            data.forEach { it ->
+                Nodes.nodesInfo.add(NodeInfo(it.name, "phil"))
+                philPos = Nodes.nodesInfo.size - 1
+                Nodes.nodes.add(Node(Nodes.nodesInfo[philPos].text))
+                graph.addNode(Nodes.nodes[philPos])
+                if (FiltersActivity.Filters.schools == 1) {
+                    it.schools.forEach {
+                        val indexSchool = Nodes.nodesInfo.indexOf(NodeInfo(it.name, "school"))
+                        if (indexSchool == -1) {
+                            Nodes.nodesInfo.add(NodeInfo(it.name, "school"))
+                            schoolPos = Nodes.nodesInfo.size - 1
+                            Nodes.nodes.add(Node(Nodes.nodesInfo[schoolPos].text))
+                            graph.addNode(Nodes.nodes[schoolPos])
+                        } else {
+                            schoolPos = indexSchool
+                        }
+                        graph.addEdge(Nodes.nodes[schoolPos], Nodes.nodes[philPos])
+                    }
+                }
+                if (FiltersActivity.Filters.meanings == 1) {
+                    it.notableIdeas.forEach {
+                        val indexIdea = Nodes.nodesInfo.indexOf(NodeInfo(it.name, "meaning"))
+                        if (indexIdea == -1) {
+                            Nodes.nodesInfo.add(NodeInfo(it.name, "meaning"))
+                            ideaPos = Nodes.nodesInfo.size - 1
+                            Nodes.nodes.add(Node(Nodes.nodesInfo[ideaPos].text))
+                            graph.addNode(Nodes.nodes[ideaPos])
+                        } else {
+                            ideaPos = indexIdea
+                        }
+                        graph.addEdge(Nodes.nodes[philPos], Nodes.nodes[ideaPos])
+                    }
+                }
             }
+        }
+        graphView.setMinZoom(1.0F, TYPE_ZOOM)
+        if(Nodes.nodes.size > 50) {
+            graphView.setMinZoom(10.0F, TYPE_ZOOM)
+        } else if (Nodes.nodes.size > 30) {
+            graphView.setMinZoom(5.0F, TYPE_ZOOM)
         }
         // you can set the graph via the constructor or use the adapter.setGraph(Graph) method
         val adapter: BaseGraphAdapter<ViewHolder?> = object : BaseGraphAdapter<ViewHolder?>(graph) {
@@ -125,6 +202,9 @@ class MainActivity : AppCompatActivity() {
                     "meaning" -> {
                         (viewHolder as SimpleViewHolder).formView.setBackgroundColor(Color.BLUE)
                     }
+                    "age" -> {
+                        (viewHolder as SimpleViewHolder).formView.setBackgroundColor(Color.parseColor("#f49393"))
+                    }
                 }
                 (viewHolder as SimpleViewHolder).textView.setText(data.toString())
             }
@@ -137,8 +217,7 @@ class MainActivity : AppCompatActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (data == null) return
-        nodeCount = 0
-        createGraph()
+        var forSearch = false
         when (resultCode) {
             1 -> Log.d(TAG, data.getStringExtra("filters"))
             2 -> Log.d(TAG, data.getStringExtra("filters"))
@@ -147,10 +226,12 @@ class MainActivity : AppCompatActivity() {
                 layoutForSearch.visibility = View.VISIBLE
                 textSearchCurrentId.text = (FiltersActivity.SearchResults.selectedVariant + 1).toString()
                 textSearchAllCount.text = FiltersActivity.SearchResults.countResults.toString()
+                forSearch = true
             }
             4 -> Log.d(TAG, data.getStringExtra("data"))
             else -> Log.d(TAG, "другой")
         }
+        createGraph(forSearch)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -174,19 +255,21 @@ class MainActivity : AppCompatActivity() {
                 else -> FiltersActivity.SearchResults.selectedVariant--
             }
             textSearchCurrentId.text = (FiltersActivity.SearchResults.selectedVariant + 1).toString()
+            createGraph(true)
         }
         buttonSearchRight.setOnClickListener {
             when(FiltersActivity.SearchResults.selectedVariant) {
                 FiltersActivity.SearchResults.countResults - 1 -> FiltersActivity.SearchResults.selectedVariant = 0
                 else -> FiltersActivity.SearchResults.selectedVariant++
             }
+            createGraph(true)
             textSearchCurrentId.text = (FiltersActivity.SearchResults.selectedVariant + 1).toString()
         }
         buttonSearchClose.setOnClickListener {
             clearSearchResults()
         }
         Log.d(TAG,"startQWQW")
-        createGraph()
+        createGraph(false)
 
     }
     fun clearSearchResults() {
@@ -194,7 +277,10 @@ class MainActivity : AppCompatActivity() {
         FiltersActivity.SearchResults.wordForSearch = ""
         FiltersActivity.SearchResults.countResults = 0
         FiltersActivity.SearchResults.selectedVariant = 0
-        FiltersActivity.SearchResults.listVariants = arrayListOf<Any>()
+        FiltersActivity.SearchResults.listPhils = arrayListOf()
+        FiltersActivity.SearchResults.listSchools = arrayListOf()
+        FiltersActivity.SearchResults.listIdeas = arrayListOf()
+        FiltersActivity.SearchResults.listEras= arrayListOf()
     }
 }
 internal class SimpleViewHolder(itemView: View) : ViewHolder(itemView) {
