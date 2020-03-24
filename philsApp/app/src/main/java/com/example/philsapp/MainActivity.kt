@@ -22,29 +22,29 @@ import com.example.philsapp.api.Operator
 import com.otaliastudios.zoom.ZoomApi.Companion.TYPE_ZOOM
 
 class NodeInfo (val text: String,
-                val type: String)
+                val type: String,
+                val id: Int)
 class MainActivity : AppCompatActivity() {
     val TAG = "kek"
-    var nodeCount = 0
 
     object Nodes {
         var nodesInfo = arrayListOf<NodeInfo>()
         var nodes = arrayListOf<Node>()
     }
-    object ForSearchResults {
-        var selectedNode = 0
-        lateinit var selectedPhil: Phil
-        var fromActivity = "graph"
+    object onClickResults {
+        var selectedId = 0
+        var selectedType = "phil"
+        var selectedName = ""
     }
 
     fun createGraph(forSearch:Boolean) {
         val graphView = findViewById<GraphView>(R.id.graph)
         // example tree
         graphView.setOnItemClickListener { parent, view, position, id ->
-            ForSearchResults.selectedNode = position
-            ForSearchResults.fromActivity = "graph"
+            onClickResults.selectedId = Nodes.nodesInfo[position].id
+            onClickResults.selectedType = Nodes.nodesInfo[position].type
+            onClickResults.selectedName = Nodes.nodesInfo[position].text
             clearSearchResults()
-            Log.d(TAG, ForSearchResults.selectedNode.toString())
             val myIntent = Intent(this, InfoCardActivity::class.java)
             startActivityForResult(myIntent, 4)
         }
@@ -76,13 +76,13 @@ class MainActivity : AppCompatActivity() {
                     var philPos = 0
                     var schoolPos = 0
                     var ideaPos = 0
-                    Nodes.nodesInfo.add(NodeInfo(data.name, "phil"))
+                    Nodes.nodesInfo.add(NodeInfo(data.name, "phil", data.wikiPageId))
                     philPos = Nodes.nodesInfo.size - 1
                     Nodes.nodes.add(Node(Nodes.nodesInfo[philPos].text))
                     graph.addNode(Nodes.nodes[philPos])
                     if (FiltersActivity.Filters.schools == 1) {
                         data.schools.forEach {
-                            Nodes.nodesInfo.add(NodeInfo(it.name, "school"))
+                            Nodes.nodesInfo.add(NodeInfo(it.name, "school",0))
                             schoolPos = Nodes.nodesInfo.size - 1
                             Nodes.nodes.add(Node(Nodes.nodesInfo[schoolPos].text))
                             graph.addNode(Nodes.nodes[schoolPos])
@@ -91,7 +91,7 @@ class MainActivity : AppCompatActivity() {
                     }
                     if (FiltersActivity.Filters.meanings == 1) {
                         data.notableIdeas.forEach {
-                            Nodes.nodesInfo.add(NodeInfo(it.name, "meaning"))
+                            Nodes.nodesInfo.add(NodeInfo(it.name, "meaning",0))
                             ideaPos = Nodes.nodesInfo.size - 1
                             Nodes.nodes.add(Node(Nodes.nodesInfo[ideaPos].text))
                             graph.addNode(Nodes.nodes[ideaPos])
@@ -103,11 +103,11 @@ class MainActivity : AppCompatActivity() {
                     val data = FiltersActivity.SearchResults.listSchools[current]
                     var philPos = 0
                     var schoolPos = 0
-                    Nodes.nodesInfo.add(NodeInfo(data.name, "school"))
+                    Nodes.nodesInfo.add(NodeInfo(data.name, "school",0))
                     Nodes.nodes.add(Node(Nodes.nodesInfo[schoolPos].text))
                     graph.addNode(Nodes.nodes[schoolPos])
                     data.philosophers.forEach {
-                        Nodes.nodesInfo.add(NodeInfo(it.name, "phil"))
+                        Nodes.nodesInfo.add(NodeInfo(it.name, "phil", it.wikiPageId))
                         philPos = Nodes.nodesInfo.size - 1
                         Nodes.nodes.add(Node(Nodes.nodesInfo[philPos].text))
                         graph.addNode(Nodes.nodes[philPos])
@@ -116,12 +116,12 @@ class MainActivity : AppCompatActivity() {
                 }
                 "meaning" -> {
                     val data = FiltersActivity.SearchResults.listIdeas[current]
-                    Nodes.nodesInfo.add(NodeInfo(data.name, "meaning"))
+                    Nodes.nodesInfo.add(NodeInfo(data.name, "meaning",0))
                     Nodes.nodes.add(Node(Nodes.nodesInfo[0].text))
                 }
                 "age" -> {
                     val data = FiltersActivity.SearchResults.listEras[current]
-                    Nodes.nodesInfo.add(NodeInfo(data.name, "age"))
+                    Nodes.nodesInfo.add(NodeInfo(data.name, "age",0))
                     Nodes.nodes.add(Node(Nodes.nodesInfo[0].text))
                 }
             }
@@ -137,15 +137,15 @@ class MainActivity : AppCompatActivity() {
             var schoolPos = 0
             var ideaPos = 0
             data.forEach { it ->
-                Nodes.nodesInfo.add(NodeInfo(it.name, "phil"))
+                Nodes.nodesInfo.add(NodeInfo(it.name, "phil",it.wikiPageId))
                 philPos = Nodes.nodesInfo.size - 1
                 Nodes.nodes.add(Node(Nodes.nodesInfo[philPos].text))
                 graph.addNode(Nodes.nodes[philPos])
                 if (FiltersActivity.Filters.schools == 1) {
                     it.schools.forEach {
-                        val indexSchool = Nodes.nodesInfo.indexOf(NodeInfo(it.name, "school"))
+                        val indexSchool = Nodes.nodesInfo.indexOf(NodeInfo(it.name, "school",0))
                         if (indexSchool == -1) {
-                            Nodes.nodesInfo.add(NodeInfo(it.name, "school"))
+                            Nodes.nodesInfo.add(NodeInfo(it.name, "school",0))
                             schoolPos = Nodes.nodesInfo.size - 1
                             Nodes.nodes.add(Node(Nodes.nodesInfo[schoolPos].text))
                             graph.addNode(Nodes.nodes[schoolPos])
@@ -157,9 +157,9 @@ class MainActivity : AppCompatActivity() {
                 }
                 if (FiltersActivity.Filters.meanings == 1) {
                     it.notableIdeas.forEach {
-                        val indexIdea = Nodes.nodesInfo.indexOf(NodeInfo(it.name, "meaning"))
+                        val indexIdea = Nodes.nodesInfo.indexOf(NodeInfo(it.name, "meaning",0))
                         if (indexIdea == -1) {
-                            Nodes.nodesInfo.add(NodeInfo(it.name, "meaning"))
+                            Nodes.nodesInfo.add(NodeInfo(it.name, "meaning",0))
                             ideaPos = Nodes.nodesInfo.size - 1
                             Nodes.nodes.add(Node(Nodes.nodesInfo[ideaPos].text))
                             graph.addNode(Nodes.nodes[ideaPos])

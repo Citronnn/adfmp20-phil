@@ -13,6 +13,10 @@ import androidx.annotation.LayoutRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.philsapp.api.Database
+import com.example.philsapp.api.Filter
+import com.example.philsapp.api.Order
+import com.example.philsapp.api.OrderBy
 import kotlinx.android.synthetic.main.activity_time_line.*
 import kotlinx.android.synthetic.main.search_bar.*
 import xyz.sangcomz.stickytimelineview.RecyclerSectionItemDecoration
@@ -24,9 +28,13 @@ import kotlin.collections.ArrayList
 
 class TimeLineActivity : AppCompatActivity(), OnItemClickListener {
     val TAG = "kek"
+    object CardsForTimeLine {
+        var arrayCards = ArrayList<Phil>()
+    }
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (data == null) return
+        var forSearch = false
         when(resultCode) {
             1 -> Log.d(TAG, data.getStringExtra("filters"))
             3 -> {
@@ -34,10 +42,12 @@ class TimeLineActivity : AppCompatActivity(), OnItemClickListener {
                 layoutForSearch.visibility = View.VISIBLE
                 textSearchCurrentId.text = (FiltersActivity.SearchResults.selectedVariant + 1).toString()
                 textSearchAllCount.text = FiltersActivity.SearchResults.countResults.toString()
+                forSearch = true
             }
             4 -> Log.d(TAG, data.getStringExtra("data"))
             else -> Log.d(TAG, "другой")
         }
+        initializeData(forSearch)
     }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,6 +70,7 @@ class TimeLineActivity : AppCompatActivity(), OnItemClickListener {
                 else -> FiltersActivity.SearchResults.selectedVariant--
             }
             textSearchCurrentId.text = (FiltersActivity.SearchResults.selectedVariant + 1).toString()
+            initializeData(true)
         }
         buttonSearchRight.setOnClickListener {
             when(FiltersActivity.SearchResults.selectedVariant) {
@@ -67,10 +78,15 @@ class TimeLineActivity : AppCompatActivity(), OnItemClickListener {
                 else -> FiltersActivity.SearchResults.selectedVariant++
             }
             textSearchCurrentId.text = (FiltersActivity.SearchResults.selectedVariant + 1).toString()
+            initializeData(true)
         }
         buttonSearchClose.setOnClickListener {
             clearSearchResults()
+            initializeData(false)
         }
+        initializeData(false, true)
+    }
+    fun initializeData(forSearch:Boolean, firstTime:Boolean = false) {
         val recyclerView: TimeLineRecyclerView = findViewById(R.id.recycler_view)
 
         //Currently only LinearLayoutManager is supported.
@@ -79,13 +95,113 @@ class TimeLineActivity : AppCompatActivity(), OnItemClickListener {
             false)
 
         //Get data
-        val philsList = getPhilsList()
+        CardsForTimeLine.arrayCards = arrayListOf()
+        val db = Database(this)
+        if (forSearch) {
+            var current = FiltersActivity.SearchResults.selectedVariant
+            var typeForSearch = "phil"
+            if (current > FiltersActivity.SearchResults.listPhils.size - 1) {
+                typeForSearch = "school"
+                current -= FiltersActivity.SearchResults.listPhils.size
+                if (current > FiltersActivity.SearchResults.listPhils.size
+                    + FiltersActivity.SearchResults.listSchools.size - 1) {
+                    typeForSearch = "ideas"
+                    current -= FiltersActivity.SearchResults.listSchools.size
+                    if (current > FiltersActivity.SearchResults.listPhils.size
+                        + FiltersActivity.SearchResults.listSchools.size
+                        + FiltersActivity.SearchResults.listIdeas.size- 1) {
+                        current -= FiltersActivity.SearchResults.listIdeas.size
+                        typeForSearch = "age"
+                    }
+                }
+            }
+            when (typeForSearch) {
+                "phil" -> {
+                    val data = FiltersActivity.SearchResults.listPhils[current]
+                    CardsForTimeLine.arrayCards.add(Phil("phil",
+                        data.birthDate ?: "Неизвестно",
+                        data.name, data.wikiPageId))
+                }
+                "school" -> {
+                    val data = FiltersActivity.SearchResults.listSchools[current]
+                    CardsForTimeLine.arrayCards.add(Phil("school",
+                        "Неизвестно",
+                        data.name, 0))
+                }
+                "meaning" -> {
+                    val data = FiltersActivity.SearchResults.listIdeas[current]
+                    CardsForTimeLine.arrayCards.add(Phil("meaning",
+                        "Неизвестно",
+                        data.name, 0))
+                }
+                "age" -> {
+                    val data = FiltersActivity.SearchResults.listEras[current]
+                    CardsForTimeLine.arrayCards.add(Phil("age",
+                        "Неизвестно",
+                        data.name, 0))
+                }
+            }
+        } else {
+            val data = db.getAllPhilosophers(
+                Filter(order = arrayOf(
+                        OrderBy(
+                            "birthDate",
+                            Order.ASC
+                        )
+                    )
+                )
+                //Filter(
+                    //    ,filter = arrayOf(FilterBy("birthDate", Operator.GT, FiltersActivity.Filters.yearStart),
+                    //      FilterBy("birthDate", Operator.LT, FiltersActivity.Filters.yearEnd))
+                //)
+            )
+            data.forEach { it ->
+                if (it.birthDate != null) {
+                    CardsForTimeLine.arrayCards.add(
+                        Phil(
+                            "phil",
+                            it.birthDate,
+                            it.name, it.wikiPageId
+                        )
+                    )
+                }
+//                if (FiltersActivity.Filters.schools == 1) {
+//                    it.schools.forEach {
+//                        val indexSchool = Nodes.nodesInfo.indexOf(NodeInfo(it.name, "school"))
+//                        if (indexSchool == -1) {
+//                            Nodes.nodesInfo.add(NodeInfo(it.name, "school"))
+//                            schoolPos = Nodes.nodesInfo.size - 1
+//                            Nodes.nodes.add(Node(Nodes.nodesInfo[schoolPos].text))
+//                            graph.addNode(Nodes.nodes[schoolPos])
+//                        } else {
+//                            schoolPos = indexSchool
+//                        }
+//                        graph.addEdge(Nodes.nodes[schoolPos], Nodes.nodes[philPos])
+//                    }
+//                }
+//                if (FiltersActivity.Filters.meanings == 1) {
+//                    it.notableIdeas.forEach {
+//                        val indexIdea = Nodes.nodesInfo.indexOf(NodeInfo(it.name, "meaning"))
+//                        if (indexIdea == -1) {
+//                            Nodes.nodesInfo.add(NodeInfo(it.name, "meaning"))
+//                            ideaPos = Nodes.nodesInfo.size - 1
+//                            Nodes.nodes.add(Node(Nodes.nodesInfo[ideaPos].text))
+//                            graph.addNode(Nodes.nodes[ideaPos])
+//                        } else {
+//                            ideaPos = indexIdea
+//                        }
+//                        graph.addEdge(Nodes.nodes[philPos], Nodes.nodes[ideaPos])
+//                    }
+//                }
+            }
+        }
         //Add RecyclerSectionItemDecoration.SectionCallback
-        recyclerView.addItemDecoration(getSectionCallback(philsList))
+        if (firstTime) recyclerView.addItemDecoration(getSectionCallback(CardsForTimeLine.arrayCards))
         //Set Adapter
         recyclerView.adapter = PhilsAdapter(layoutInflater,
-            philsList,
+            CardsForTimeLine.arrayCards,
             R.layout.recycler_row, this)
+        // recyclerView.adapter!!.notifyDataSetChanged()
     }
     fun clearSearchResults() {
         layoutForSearch.visibility = View.GONE
@@ -98,14 +214,13 @@ class TimeLineActivity : AppCompatActivity(), OnItemClickListener {
         FiltersActivity.SearchResults.listEras= arrayListOf()
     }
     override fun onItemClicked(user: Phil) {
-        Log.d("kek", user.name)
-        MainActivity.ForSearchResults.selectedPhil = user
-        MainActivity.ForSearchResults.fromActivity = "timeline"
+        MainActivity.onClickResults.selectedId = user.id
+        MainActivity.onClickResults.selectedType = user.type
+        MainActivity.onClickResults.selectedName = user.name
         clearSearchResults()
         val myIntent = Intent(this, InfoCardActivity::class.java)
         startActivityForResult(myIntent, 4)
     }
-    private fun getPhilsList(): List<Phil> = PhilsRepo().philsList
 
 
     //Get SectionCallback method
@@ -129,7 +244,8 @@ interface OnItemClickListener{
 data class Phil(
     val type: String,
     val startYear: String,
-    val name: String)
+    val name: String,
+    val id: Int)
 class PhilsAdapter(private val layoutInflater: LayoutInflater,
                     private val philsList: List<Phil>,
                     @param:LayoutRes private val rowLayout: Int,
@@ -150,6 +266,7 @@ class PhilsAdapter(private val layoutInflater: LayoutInflater,
             "school" -> holder.fullName.setBackgroundColor(Color.parseColor("#f4e893"))
             "phil" -> holder.fullName.setBackgroundColor(Color.parseColor("#93f49a"))
             "age" -> holder.fullName.setBackgroundColor(Color.parseColor("#f49393"))
+            "meaning" -> holder.fullName.setBackgroundColor(Color.parseColor("#61d2fd"))
         }
     }
 
@@ -164,23 +281,4 @@ class PhilsAdapter(private val layoutInflater: LayoutInflater,
             }
         }
     }
-}
-class PhilsRepo {
-    //solo
-    val philsList: List<Phil>
-        get() {
-            val philsList = ArrayList<Phil>()
-            philsList.add(Phil( "phil","2215", "Философ3"))
-            philsList.add(Phil("phil","1946", "Философ1"))
-            philsList.add(Phil("school","1946", "Школа1"))
-
-            philsList.add(Phil( "phil","1244", "Философ2"))
-            philsList.add(Phil("school","1244", "Школа2"))
-            philsList.add(Phil( "phil","800", "Философ4"))
-            philsList.add(Phil( "age","400", "Эпоха3"))
-            philsList.add(Phil( "age","-400", "Эпоха2"))
-            philsList.add(Phil( "age","-1400", "Эпоха1"))
-
-            return philsList
-        }
 }

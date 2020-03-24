@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import com.example.philsapp.api.*
 import kotlinx.android.synthetic.main.activity_info_card.*
 
 class InfoCardActivity : AppCompatActivity() {
@@ -12,28 +13,30 @@ class InfoCardActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_info_card)
         var onlyHead = false
-        if (MainActivity.ForSearchResults.fromActivity === "graph") {
-            titleContent.text = MainActivity.Nodes.nodesInfo[MainActivity.ForSearchResults.selectedNode].text
-            if (MainActivity.Nodes.nodesInfo[MainActivity.ForSearchResults.selectedNode].type != "phil") onlyHead = true
+        val db = Database(this)
+        if (MainActivity.onClickResults.selectedType === "phil") {
+            val data = db.getOnePhilosopher(MainActivity.onClickResults.selectedId)
+            setFieldsForPhil(data.name, data.abstract, data.wikipediaLink, data.wikiPagePopularity,
+                data.gender, data.birthDate, data.deathDate, data.nationalities,data.names, data.wasBorn,
+                data.died, data.wasInfluencedBy, data.influencedOn, data.notableIdeas, data.mainInterests,
+                data.schools)
         } else {
-            titleContent.text = MainActivity.ForSearchResults.selectedPhil.name
-            if (MainActivity.ForSearchResults.selectedPhil.type != "phil") onlyHead = true
+            onlyHead = true
+            when (MainActivity.onClickResults.selectedType) {
+                "school" -> {
+                    val data = db.getOneSchool(MainActivity.onClickResults.selectedName)
+                    setFieldsForOther(data.name, data.abstract, data.wikipediaLink, data.wikiPagePopularity)
+                }
+                "meaning" -> {
+                    val data = db.getOneSchool(MainActivity.onClickResults.selectedName)
+                    setFieldsForOther(data.name, data.abstract, data.wikipediaLink, data.wikiPagePopularity)
+                }
+                "age" -> {
+                    val data = db.getOneSchool(MainActivity.onClickResults.selectedName)
+                    setFieldsForOther(data.name, data.abstract, data.wikipediaLink, data.wikiPagePopularity)
+                }
+            }
         }
-        abstractContent.text = "Краткое описание"
-        wikiContent.text = "qwe.ru"
-        ratingWikiContent.text = "155"
-        genderPhil.text = "Мужской"
-        birthDayPhil.text = "23.12.1092"
-        deathDayPhil.text = "21.11.1159"
-        nationalityPhil.text = "Шотландец"
-        listNamesPhil.text = "Андрей, Артем"
-        listBirthPlacesPhil.text = "Италия, Франция"
-        listDeathPlacesPhil.text = "Англия, Киевская Русь"
-        influencePhil.text = "Сократ"
-        worksPhil.text = "Работа1, Работа2"
-        ideasPhil.text = "Идея1, Идея2"
-        interestsPhil.text = "Интерес1, Интерес2"
-        schoolsPhil.text = "Школа1, Школа2"
        if (onlyHead) {
             layoutForGender.visibility = View.GONE
             layoutForBirthDay.visibility = View.GONE
@@ -42,9 +45,9 @@ class InfoCardActivity : AppCompatActivity() {
             nationalityPhil.visibility = View.GONE
             layoutForListNames.visibility = View.GONE
             layoutForListBirthPlaces.visibility = View.GONE
+           layoutForInfluenceByHim.visibility = View.GONE
             layoutForListDeathPlaces.visibility = View.GONE
             layoutForInfluence.visibility = View.GONE
-            layoutForWorks.visibility = View.GONE
             layoutForIdeas.visibility = View.GONE
             layoutForInterests.visibility = View.GONE
             layoutForSchools.visibility = View.GONE
@@ -53,6 +56,191 @@ class InfoCardActivity : AppCompatActivity() {
             intent.putExtra("data", "ok")
             setResult(4, intent)
             finish()
+        }
+    }
+    fun setFieldsForOther(name: String, abstract: String?, wiki: String?, ratingWiki: Int?) {
+        titleContent.text = name
+        if (abstract != null) {
+            abstractContent.text = abstract
+        } else {
+            layoutForAbstract.visibility = View.GONE
+        }
+        if (wiki != null) {
+            wikiContent.text = wiki
+        } else {
+            layoutForWiki.visibility = View.GONE
+        }
+        if (ratingWiki != null && ratingWiki>0) {
+            ratingWikiContent.text = ratingWiki.toString()
+        } else {
+            layoutForWikiRating.visibility = View.GONE
+        }
+    }
+    fun setFieldsForPhil(name: String, abstract: String?, wiki: String?, ratingWiki: Int?,
+                         gender: String?, birthDay: String?, deathDay: String?,
+                         nationalities: ArrayList<String>?, names: ArrayList<String>?,
+                         birthPlaces: ArrayList<Place>?, deathPlaces: ArrayList<Place>?,
+                         influence: ArrayList<Philosopher>?, influenceByHim: ArrayList<Philosopher>?,
+                         ideas: ArrayList<NotableIdea>?, interests: ArrayList<MainInterest>?,
+                         schools: ArrayList<PhilosophicalSchool>?
+                         )  {
+
+        titleContent.text = name
+        if (abstract != null) {
+            abstractContent.text = abstract
+        } else {
+            layoutForAbstract.visibility = View.GONE
+        }
+        if (wiki != null) {
+            wikiContent.text = wiki
+        } else {
+            layoutForWiki.visibility = View.GONE
+        }
+        if (ratingWiki != null) {
+            ratingWikiContent.text = ratingWiki.toString()
+        } else {
+            layoutForWikiRating.visibility = View.GONE
+        }
+        if (gender != null) {
+            genderPhil.text = gender
+        } else {
+            layoutForGender.visibility = View.GONE
+        }
+        if (birthDay != null) {
+            birthDayPhil.text = birthDay
+        } else {
+            layoutForBirthDay.visibility = View.GONE
+        }
+        if (deathDay != null) {
+            deathDayPhil.text = birthDay
+        } else {
+            layoutForDeathDay.visibility = View.GONE
+        }
+        if (nationalities != null && nationalities.size > 0) {
+            var natList = ""
+            var count = 0
+            nationalities.forEach {
+                natList += it
+                count++
+                if (count < nationalities.size) {
+                    natList += ", "
+                }
+            }
+            nationalityPhil.text = natList
+        } else {
+            layoutForNationality.visibility = View.GONE
+        }
+        if (names != null && names.size > 0) {
+            var namesList = ""
+            var count = 0
+            names.forEach {
+                namesList += it
+                count++
+                if (count < names.size) {
+                    namesList += ", "
+                }
+            }
+            listNamesPhil.text = namesList
+        } else {
+            layoutForListNames.visibility = View.GONE
+        }
+        if (birthPlaces != null && birthPlaces.size > 0) {
+            var birthList = ""
+            var count = 0
+            birthPlaces.forEach {
+                birthList += it.name
+                count++
+                if (count < birthPlaces.size) {
+                    birthList += ", "
+                }
+            }
+            listBirthPlacesPhil.text = birthList
+        } else {
+            layoutForListBirthPlaces.visibility = View.GONE
+        }
+        if (deathPlaces != null && deathPlaces.size > 0) {
+            var deathList = ""
+            var count = 0
+            deathPlaces.forEach {
+                deathList += it.name
+                count++
+                if (count < deathPlaces.size) {
+                    deathList += ", "
+                }
+            }
+            listDeathPlacesPhil.text = deathList
+        } else {
+            layoutForListDeathPlaces.visibility = View.GONE
+        }
+        if (influence != null && influence.size > 0) {
+            var philsList = ""
+            var count = 0
+            influence.forEach {
+                philsList += it.name
+                count++
+                if (count < influence.size) {
+                    philsList += ", "
+                }
+            }
+            influencePhil.text = philsList
+        } else {
+            layoutForInfluence.visibility = View.GONE
+        }
+        if (influenceByHim != null && influenceByHim.size > 0) {
+            var philsList = ""
+            var count = 0
+            influenceByHim.forEach {
+                philsList += it.name
+                count++
+                if (count < influenceByHim.size) {
+                    philsList += ", "
+                }
+            }
+            influenceByHimPhil.text = philsList
+        } else {
+            layoutForInfluenceByHim.visibility = View.GONE
+        }
+        if (ideas != null && ideas.size > 0) {
+            var ideasList = ""
+            var count = 0
+            ideas.forEach {
+                ideasList += it.name
+                count++
+                if (count < ideas.size) {
+                    ideasList += ", "
+                }
+            }
+            ideasPhil.text = ideasList
+        } else {
+            layoutForIdeas.visibility = View.GONE
+        }
+        if (interests != null && interests.size > 0) {
+            var interestsList = ""
+            var count = 0
+            interests.forEach {
+                interestsList += it.name
+                count++
+                if (count < interests.size) {
+                    interestsList += ", "
+                }
+            }
+            interestsPhil.text = interestsList
+        } else {
+            layoutForInterests.visibility = View.GONE
+        }
+        if (schools != null && schools.size > 0) {
+            var schoolsList = ""
+            var count = 0
+            schools.forEach {
+                schoolsList += it.name
+                count++
+                if (count < schools.size) {
+                    schoolsList += ", "
+                }
+            }
+            schoolsPhil.text = schoolsList
+        } else {
+            layoutForSchools.visibility = View.GONE
         }
     }
 }

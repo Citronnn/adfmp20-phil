@@ -6,7 +6,13 @@
     android:layout_height="match_parent"
     android:padding="5dp"
     tools:context=".InfoCardActivity">
-
+<ScrollView
+    android:layout_width="match_parent"
+    android:orientation="vertical"
+    android:layout_height="match_parent">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
     <TextView
         android:id="@+id/titleContent"
         android:layout_width="match_parent"
@@ -58,6 +64,7 @@
         <TextView
             android:id="@+id/ratingWikiContent"
             android:layout_width="match_parent"
+            android:text="14"
             android:layout_height="wrap_content"/>
     </LinearLayout>
     <LinearLayout
@@ -189,7 +196,7 @@
             android:layout_height="wrap_content"/>
     </LinearLayout>
     <LinearLayout
-        android:id="@+id/layoutForWorks"
+        android:id="@+id/layoutForInfluenceByHim"
         android:layout_width="match_parent"
         android:orientation="vertical"
         android:layout_below="@id/layoutForInfluence"
@@ -197,10 +204,10 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Работы: "
+            android:text="Оказал влияние: "
             android:textStyle="bold"/>
         <TextView
-            android:id="@+id/worksPhil"
+            android:id="@+id/influenceByHimPhil"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
     </LinearLayout>
@@ -208,7 +215,7 @@
         android:id="@+id/layoutForIdeas"
         android:layout_width="match_parent"
         android:orientation="vertical"
-        android:layout_below="@id/layoutForWorks"
+        android:layout_below="@id/layoutForInfluenceByHim"
         android:layout_height="wrap_content">
         <TextView
             android:layout_width="wrap_content"
@@ -252,6 +259,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
     </LinearLayout>
+    </RelativeLayout>
+</ScrollView>
+
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/returnFromInfoPage"
         android:layout_width="wrap_content"
