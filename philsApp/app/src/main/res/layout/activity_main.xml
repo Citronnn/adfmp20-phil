@@ -10,7 +10,7 @@
         android:layout_height="match_parent">
         <de.blox.graphview.GraphView
             android:id="@+id/graph"
-            app:maxZoom="100.0"
+            app:maxZoom="500.0"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
         </de.blox.graphview.GraphView>

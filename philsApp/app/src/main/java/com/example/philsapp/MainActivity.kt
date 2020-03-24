@@ -37,14 +37,6 @@ class MainActivity : AppCompatActivity() {
     fun createGraph(forSearch:Boolean) {
         val graphView = findViewById<GraphView>(R.id.graph)
         // example tree
-        graphView.setOnItemClickListener { parent, view, position, id ->
-            onClickResults.selectedId = Nodes.nodesInfo[position].id
-            onClickResults.selectedType = Nodes.nodesInfo[position].type
-            onClickResults.selectedName = Nodes.nodesInfo[position].text
-            clearSearchResults()
-            val myIntent = Intent(this, InfoCardActivity::class.java)
-            startActivityForResult(myIntent, 4)
-        }
         val graph = Graph()
         val db = Database(this)
         Nodes.nodesInfo = arrayListOf<NodeInfo>()
@@ -140,30 +132,34 @@ class MainActivity : AppCompatActivity() {
                 graph.addNode(Nodes.nodes[philPos])
                 if (FiltersActivity.Filters.schools == 1) {
                     it.schools.forEach {
-                        val indexSchool = Nodes.nodesInfo.indexOf(NodeInfo(it.name, "school",0))
-                        if (indexSchool == -1) {
+                        val school = Nodes.nodes.find {nI: Node ->
+                            nI.data == it.name
+                        }
+                        if (school == null) {
                             Nodes.nodesInfo.add(NodeInfo(it.name, "school",0))
                             schoolPos = Nodes.nodesInfo.size - 1
                             Nodes.nodes.add(Node(Nodes.nodesInfo[schoolPos].text))
                             graph.addNode(Nodes.nodes[schoolPos])
+                            graph.addEdge(Nodes.nodes[schoolPos], Nodes.nodes[philPos])
                         } else {
-                            schoolPos = indexSchool
+                            graph.addEdge(school, Nodes.nodes[philPos])
                         }
-                        graph.addEdge(Nodes.nodes[schoolPos], Nodes.nodes[philPos])
                     }
                 }
                 if (FiltersActivity.Filters.meanings == 1) {
                     it.notableIdeas.forEach {
-                        val indexIdea = Nodes.nodesInfo.indexOf(NodeInfo(it.name, "meaning",0))
-                        if (indexIdea == -1) {
+                        val idea = Nodes.nodes.find {nI: Node ->
+                            nI.data == it.name
+                        }
+                        if (idea == null) {
                             Nodes.nodesInfo.add(NodeInfo(it.name, "meaning",0))
                             ideaPos = Nodes.nodesInfo.size - 1
                             Nodes.nodes.add(Node(Nodes.nodesInfo[ideaPos].text))
                             graph.addNode(Nodes.nodes[ideaPos])
+                            graph.addEdge(Nodes.nodes[philPos], Nodes.nodes[ideaPos])
                         } else {
-                            ideaPos = indexIdea
+                            graph.addEdge(Nodes.nodes[philPos], idea)
                         }
-                        graph.addEdge(Nodes.nodes[philPos], Nodes.nodes[ideaPos])
                     }
                 }
             }
@@ -206,7 +202,16 @@ class MainActivity : AppCompatActivity() {
                 (viewHolder as SimpleViewHolder).textView.setText(data.toString())
             }
         }
+        adapter.graph = graph
         graphView.adapter = adapter
+        graphView.setOnItemClickListener { parent, view, position, id ->
+            onClickResults.selectedId = Nodes.nodesInfo[position].id
+            onClickResults.selectedType = Nodes.nodesInfo[position].type
+            onClickResults.selectedName = Nodes.nodesInfo[position].text
+            clearSearchResults()
+            val myIntent = Intent(this, InfoCardActivity::class.java)
+            startActivityForResult(myIntent, 4)
+        }
         // set the algorithm here
         adapter.setAlgorithm(FruchtermanReingoldAlgorithm(1000))
     }
