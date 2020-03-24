@@ -155,6 +155,9 @@ class TimeLineActivity : AppCompatActivity(), OnItemClickListener {
                     //      FilterBy("birthDate", Operator.LT, FiltersActivity.Filters.yearEnd))
                 //)
             )
+            val schools = mutableSetOf<PhilosophicalSchool>()
+            val meanings = mutableSetOf<NotableIdea>()
+            val eras = mutableSetOf<Era>()
             data.forEach { it ->
                     CardsForTimeLine.arrayCards.add(
                         Phil(
@@ -163,35 +166,58 @@ class TimeLineActivity : AppCompatActivity(), OnItemClickListener {
                             it.name, it.wikiPageId
                         )
                     )
-//                if (FiltersActivity.Filters.schools == 1) {
-//                    it.schools.forEach {
-//                        val indexSchool = Nodes.nodesInfo.indexOf(NodeInfo(it.name, "school"))
-//                        if (indexSchool == -1) {
-//                            Nodes.nodesInfo.add(NodeInfo(it.name, "school"))
-//                            schoolPos = Nodes.nodesInfo.size - 1
-//                            Nodes.nodes.add(Node(Nodes.nodesInfo[schoolPos].text))
-//                            graph.addNode(Nodes.nodes[schoolPos])
-//                        } else {
-//                            schoolPos = indexSchool
-//                        }
-//                        graph.addEdge(Nodes.nodes[schoolPos], Nodes.nodes[philPos])
-//                    }
-//                }
-//                if (FiltersActivity.Filters.meanings == 1) {
-//                    it.notableIdeas.forEach {
-//                        val indexIdea = Nodes.nodesInfo.indexOf(NodeInfo(it.name, "meaning"))
-//                        if (indexIdea == -1) {
-//                            Nodes.nodesInfo.add(NodeInfo(it.name, "meaning"))
-//                            ideaPos = Nodes.nodesInfo.size - 1
-//                            Nodes.nodes.add(Node(Nodes.nodesInfo[ideaPos].text))
-//                            graph.addNode(Nodes.nodes[ideaPos])
-//                        } else {
-//                            ideaPos = indexIdea
-//                        }
-//                        graph.addEdge(Nodes.nodes[philPos], Nodes.nodes[ideaPos])
-//                    }
-//                }
+                if (FiltersActivity.Filters.schools == 1) {
+                    it.schools.forEach {
+                        schools.add(it)
+                    }
+                }
+                if (FiltersActivity.Filters.meanings == 1) {
+                    it.notableIdeas.forEach {
+                        meanings.add(it)
+                    }
+                }
+                if (FiltersActivity.Filters.ages == 1) {
+                    it.eras.forEach {
+                        eras.add(it)
+                    }
+                }
             }
+            schools.forEach {
+                if (it.firstPhilosopher != null) {
+                    CardsForTimeLine.arrayCards.add(
+                        Phil(
+                            "school",
+                            it.firstPhilosopher!!.birthDate ?: "",
+                            it.name, 0
+                        )
+                    )
+                }
+            }
+            meanings.forEach {
+                if (it.firstPhilosopher != null) {
+                    CardsForTimeLine.arrayCards.add(
+                        Phil(
+                            "meaning",
+                            it.firstPhilosopher!!.birthDate ?: "",
+                            it.name, 0
+                        )
+                    )
+                }
+            }
+            eras.forEach {
+                if (it.firstPhilosopher != null) {
+                    CardsForTimeLine.arrayCards.add(
+                        Phil(
+                            "age",
+                            it.firstPhilosopher!!.birthDate ?: "",
+                            it.name, 0
+                        )
+                    )
+                }
+            }
+        }
+        CardsForTimeLine.arrayCards.sortBy {
+            it.startYear
         }
         //Add RecyclerSectionItemDecoration.SectionCallback
         if (firstTime) recyclerView.addItemDecoration(getSectionCallback(CardsForTimeLine.arrayCards))
