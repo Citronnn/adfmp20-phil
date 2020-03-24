@@ -11,14 +11,11 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
-import com.example.philsapp.api.Database
+import com.example.philsapp.api.*
 import de.blox.graphview.*
 import de.blox.graphview.energy.FruchtermanReingoldAlgorithm
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.search_bar.*
-import com.example.philsapp.api.Filter
-import com.example.philsapp.api.FilterBy
-import com.example.philsapp.api.Operator
 import com.otaliastudios.zoom.ZoomApi.Companion.TYPE_ZOOM
 
 class NodeInfo (val text: String,
@@ -128,9 +125,9 @@ class MainActivity : AppCompatActivity() {
         } else {
             val data = db.getAllPhilosophers(
                 Filter(
-                    limit = if (FiltersActivity.Filters.topGT == 1) FiltersActivity.Filters.countGT else 20
-                    //    ,filter = arrayOf(FilterBy("birthDate", Operator.GT, FiltersActivity.Filters.yearStart),
-                    //      FilterBy("birthDate", Operator.LT, FiltersActivity.Filters.yearEnd))
+                    limit = if (FiltersActivity.Filters.topGT == 1) FiltersActivity.Filters.countGT else 20,
+                    filter = arrayOf(FilterBy("birthDate", Operator.GT, dateToJd(FiltersActivity.Filters.yearStart)),
+                          FilterBy("birthDate", Operator.LT, dateToJd(FiltersActivity.Filters.yearEnd)))
                 )
             )
             var philPos = 0

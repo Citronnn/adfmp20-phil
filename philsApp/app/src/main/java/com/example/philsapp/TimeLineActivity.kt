@@ -13,10 +13,7 @@ import androidx.annotation.LayoutRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.philsapp.api.Database
-import com.example.philsapp.api.Filter
-import com.example.philsapp.api.Order
-import com.example.philsapp.api.OrderBy
+import com.example.philsapp.api.*
 import kotlinx.android.synthetic.main.activity_time_line.*
 import kotlinx.android.synthetic.main.search_bar.*
 import xyz.sangcomz.stickytimelineview.RecyclerSectionItemDecoration
@@ -148,7 +145,10 @@ class TimeLineActivity : AppCompatActivity(), OnItemClickListener {
                             "birthDate",
                             Order.ASC
                         )
-                    )
+                    ),
+                    filter = arrayOf(FilterBy("birthDate", Operator.NOTNULL),
+                        FilterBy("birthDate", Operator.GT, dateToJd(FiltersActivity.Filters.yearStart)),
+                        FilterBy("birthDate", Operator.LT, dateToJd(FiltersActivity.Filters.yearEnd)))
                 )
                 //Filter(
                     //    ,filter = arrayOf(FilterBy("birthDate", Operator.GT, FiltersActivity.Filters.yearStart),
@@ -156,15 +156,13 @@ class TimeLineActivity : AppCompatActivity(), OnItemClickListener {
                 //)
             )
             data.forEach { it ->
-                if (it.birthDate != null) {
                     CardsForTimeLine.arrayCards.add(
                         Phil(
                             "phil",
-                            it.birthDate,
+                            it.birthDate ?: "",
                             it.name, it.wikiPageId
                         )
                     )
-                }
 //                if (FiltersActivity.Filters.schools == 1) {
 //                    it.schools.forEach {
 //                        val indexSchool = Nodes.nodesInfo.indexOf(NodeInfo(it.name, "school"))
