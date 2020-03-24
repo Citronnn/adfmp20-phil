@@ -199,7 +199,7 @@ class TimeLineActivity : AppCompatActivity(), OnItemClickListener {
         recyclerView.adapter = PhilsAdapter(layoutInflater,
             CardsForTimeLine.arrayCards,
             R.layout.recycler_row, this)
-        // recyclerView.adapter!!.notifyDataSetChanged()
+        recyclerView.adapter!!.notifyDataSetChanged()
     }
     fun clearSearchResults() {
         layoutForSearch.visibility = View.GONE
@@ -226,11 +226,12 @@ class TimeLineActivity : AppCompatActivity(), OnItemClickListener {
         return object : RecyclerSectionItemDecoration.SectionCallback {
             //In your data, implement a method to determine if this is a section.
             override fun isSection(position: Int): Boolean =
-                philsList[position].startYear != philsList[position - 1].startYear
+                CardsForTimeLine.arrayCards[position].startYear !=
+                        CardsForTimeLine.arrayCards[position - 1].startYear
 
             //Implement a method that returns a SectionHeader.
             override fun getSectionHeader(position: Int): SectionInfo? =
-                SectionInfo(philsList[position].startYear, "")
+                SectionInfo(CardsForTimeLine.arrayCards[position].startYear, "")
         }
     }
 

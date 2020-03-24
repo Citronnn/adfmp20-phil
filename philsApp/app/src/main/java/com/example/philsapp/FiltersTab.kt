@@ -17,7 +17,8 @@ import com.appyvet.materialrangebar.RangeBar.OnRangeBarChangeListener
  * A simple [Fragment] subclass.
  */
 class FiltersTab : Fragment() {
-
+    val startRangePin = -800
+    val endRangePin = 2000
     object FiltersObject {
         var schools = 1
         var meanings = 0
@@ -49,8 +50,8 @@ class FiltersTab : Fragment() {
                 meansFilter, agesFilter, googleTrendsFilter, layoutForGoogleTrends,
                 editCount)
         }
-        rangeBar.tickStart = (-800).toFloat()
-        rangeBar.tickEnd = 2000F
+        rangeBar.tickStart = (startRangePin).toFloat()
+        rangeBar.tickEnd = endRangePin.toFloat()
         setFilters(rangeBar, schoolsFilter,
             meansFilter, agesFilter, googleTrendsFilter, layoutForGoogleTrends,
             editCount)
@@ -89,9 +90,8 @@ class FiltersTab : Fragment() {
                 leftPinValue: String,
                 rightPinValue: String
             ) {
-                FiltersActivity.Filters.yearStart = leftPinIndex.toInt()
-                FiltersActivity.Filters.yearEnd = rightPinIndex.toInt()
-                Log.d("kek", "$leftPinIndex, $rightPinIndex")
+                FiltersActivity.Filters.yearStart = leftPinIndex + startRangePin
+                FiltersActivity.Filters.yearEnd = rightPinIndex + startRangePin
             }
 
             override fun onTouchEnded(rangeBar: RangeBar) {}
