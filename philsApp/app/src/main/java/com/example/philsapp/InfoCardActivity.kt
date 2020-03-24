@@ -28,11 +28,11 @@ class InfoCardActivity : AppCompatActivity() {
                     setFieldsForOther(data.name, data.abstract, data.wikipediaLink, data.wikiPagePopularity)
                 }
                 "meaning" -> {
-                    val data = db.getOneSchool(MainActivity.onClickResults.selectedName)
+                    val data = db.getOneIdea(MainActivity.onClickResults.selectedName)
                     setFieldsForOther(data.name, data.abstract, data.wikipediaLink, data.wikiPagePopularity)
                 }
                 "age" -> {
-                    val data = db.getOneSchool(MainActivity.onClickResults.selectedName)
+                    val data = db.getOneEra(MainActivity.onClickResults.selectedName)
                     setFieldsForOther(data.name, data.abstract, data.wikipediaLink, data.wikiPagePopularity)
                 }
             }

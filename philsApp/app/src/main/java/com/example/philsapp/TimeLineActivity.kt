@@ -100,13 +100,10 @@ class TimeLineActivity : AppCompatActivity(), OnItemClickListener {
             if (current > FiltersActivity.SearchResults.listPhils.size - 1) {
                 typeForSearch = "school"
                 current -= FiltersActivity.SearchResults.listPhils.size
-                if (current > FiltersActivity.SearchResults.listPhils.size
-                    + FiltersActivity.SearchResults.listSchools.size - 1) {
-                    typeForSearch = "ideas"
+                if (current > FiltersActivity.SearchResults.listSchools.size - 1) {
+                    typeForSearch = "meaning"
                     current -= FiltersActivity.SearchResults.listSchools.size
-                    if (current > FiltersActivity.SearchResults.listPhils.size
-                        + FiltersActivity.SearchResults.listSchools.size
-                        + FiltersActivity.SearchResults.listIdeas.size- 1) {
+                    if (current > FiltersActivity.SearchResults.listIdeas.size- 1) {
                         current -= FiltersActivity.SearchResults.listIdeas.size
                         typeForSearch = "age"
                     }
