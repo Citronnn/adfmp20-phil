@@ -35,8 +35,6 @@ class Filter(
 
     fun toSql(): String {
         var q = ""
-        limit?.let { q += " LIMIT $it" }
-        offset?.let { q += " OFFSET $it" }
         filter?.let { filter ->
             q += " WHERE "
             q += filter.joinToString(separator = " AND ") { getFilter(it) }
@@ -45,6 +43,8 @@ class Filter(
             q += " ORDER BY "
             q += order.joinToString(separator = ", ") { "${it.column} ${it.order}" }
         }
+        limit?.let { q += " LIMIT $it" }
+        offset?.let { q += " OFFSET $it" }
         return q
     }
 }
