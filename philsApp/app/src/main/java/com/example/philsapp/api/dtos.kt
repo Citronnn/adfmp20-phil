@@ -65,10 +65,15 @@ data class Era(
                 SELECT philosopher_wikiPageID FROM ${Philosopher.TABLE_ERA}
                 WHERE era = "$name"
             )
+            ORDER BY birthDate ASC
         """.trimIndent(), null
         ).use { c ->
             Philosopher.factory.getList(c, db)
         }
+    }
+
+    val firstPhilosopher: Philosopher? by lazy {
+        philosophers.first { it.birthDate != null }
     }
 
     companion object {
@@ -111,10 +116,15 @@ data class MainInterest(
                 SELECT philosopher_wikiPageID FROM ${Philosopher.TABLE_INTEREST}
                 WHERE mainInterest = "$name"
             )
+            ORDER BY birthDate ASC
         """.trimIndent(), null
         ).use { c ->
             Philosopher.factory.getList(c, db)
         }
+    }
+
+    val firstPhilosopher: Philosopher? by lazy {
+        philosophers.first { it.birthDate != null }
     }
 
     companion object {
@@ -159,10 +169,15 @@ data class PhilosophicalSchool(
                 SELECT philosopher_wikiPageID FROM ${Philosopher.TABLE_SCHOOLS}
                 WHERE philosophicalSchool = "$name"
             )
+            ORDER BY birthDate ASC
         """.trimIndent(), null
         ).use { c ->
             Philosopher.factory.getList(c, db)
         }
+    }
+
+    val firstPhilosopher: Philosopher? by lazy {
+        philosophers.first { it.birthDate != null }
     }
 
     companion object {
@@ -238,10 +253,15 @@ data class NotableIdea(
                 SELECT philosopher_wikiPageID FROM ${Philosopher.TABLE_IDEAS}
                 WHERE notableIdea = "$name"
             )
+            ORDER BY birthDate ASC
         """.trimIndent(), null
         ).use { c ->
             Philosopher.factory.getList(c, db)
         }
+    }
+
+    val firstPhilosopher: Philosopher? by lazy {
+        philosophers.first { it.birthDate != null }
     }
 
     companion object {

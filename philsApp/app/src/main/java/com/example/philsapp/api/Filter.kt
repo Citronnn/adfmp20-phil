@@ -11,10 +11,11 @@ enum class Operator {
     GT,
     LT,
     CONTAINS,
-    EQUALS
+    EQUALS,
+    NOTNULL
 }
 
-class FilterBy(val column: String, val op: Operator, val value: Any)
+class FilterBy(val column: String, val op: Operator, val value: Any? = null)
 
 class Filter(
     private val limit: Int? = null,
@@ -28,6 +29,7 @@ class Filter(
             Operator.LT -> "${filterBy.column} < ${filterBy.value}"
             Operator.CONTAINS -> "${filterBy.column} LIKE '%${filterBy.value}%'"
             Operator.EQUALS -> "${filterBy.column} = ${filterBy.value}"
+            Operator.NOTNULL -> "${filterBy.column} IS NOT NULL"
         }
     }
 
@@ -37,7 +39,7 @@ class Filter(
         offset?.let { q += " OFFSET $it" }
         filter?.let { filter ->
             q += " WHERE "
-            q += filter.joinToString(separator = ", ") { getFilter(it) }
+            q += filter.joinToString(separator = " AND ") { getFilter(it) }
         }
         order?.let { order ->
             q += " ORDER BY "
