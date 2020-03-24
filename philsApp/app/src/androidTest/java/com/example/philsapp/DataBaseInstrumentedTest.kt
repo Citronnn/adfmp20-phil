@@ -61,21 +61,25 @@ class DataBaseInstrumentedTest {
             assertTrue(it.philosophers.any {
                 it.wikiPageId == ARISTOTLE_ID
             })
+            assertNotNull(it.firstPhilosopher)
         }
         phil.mainInterests.forEach { it ->
             assertTrue(it.philosophers.any {
                 it.wikiPageId == ARISTOTLE_ID
             })
+            assertNotNull(it.firstPhilosopher)
         }
         phil.schools.forEach { it ->
             assertTrue(it.philosophers.any {
                 it.wikiPageId == ARISTOTLE_ID
             })
+            assertNotNull(it.firstPhilosopher)
         }
         phil.eras.forEach { it ->
             assertTrue(it.philosophers.any {
                 it.wikiPageId == ARISTOTLE_ID
             })
+            assertNotNull(it.firstPhilosopher)
         }
     }
 
