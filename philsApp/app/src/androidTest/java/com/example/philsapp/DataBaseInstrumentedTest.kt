@@ -140,16 +140,23 @@ class DataBaseInstrumentedTest {
                 Filter(filter = arrayOf(FilterBy("name", Operator.CONTAINS, "Vladimir Ivanov")))
             ).size, 0
         )
-        // assertEquals(
-        //     db.getAllPhilosophers(
-        //         Filter(filter=arrayOf(FilterBy("birthDate", Operator.GT, "'3000-01-01'")))
-        //     ).size, 0
-        // )
-        // assertEquals(
-        //     db.getAllPhilosophers(
-        //         Filter(filter=arrayOf(FilterBy("birthDate", Operator.LT, "'3000-01-01'")))
-        //     ).size,
-        //     db.getAllPhilosophers().size
-        // )
+        assertEquals(
+            db.getAllPhilosophers(
+                Filter(filter = arrayOf(FilterBy("birthDate", Operator.GT, dateToJd(3000))))
+            ).size, 0
+        )
+        assertEquals(
+            db.getAllPhilosophers(
+                Filter(
+                    filter = arrayOf(
+                        FilterBy("birthDate", Operator.LT, dateToJd(5000)),
+                        FilterBy("birthDate", Operator.GT, dateToJd(-5000))
+                    )
+                )
+            ).size,
+            db.getAllPhilosophers(
+                Filter(filter = arrayOf(FilterBy("birthDate", Operator.NOTNULL)))
+            ).size
+        )
     }
 }

@@ -37,7 +37,7 @@ class Database(val context: Context) :
 
     fun getAllPhilosophers(filter: Filter? = null): ArrayList<Philosopher> {
         val db = readableDatabase
-        db.rawQuery("SELECT ${Philosopher.COLUMNS} FROM Philosopher ${filter?.toSql() ?: ""}", null)
+        db.rawQuery("SELECT ${Philosopher.COLUMNS} FROM Philosopher${filter?.toSql() ?: ""}", null)
             .use { c ->
             return Philosopher.factory.getList(c, db)
         }
