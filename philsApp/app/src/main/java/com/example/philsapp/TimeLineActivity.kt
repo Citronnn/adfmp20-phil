@@ -21,6 +21,7 @@ import xyz.sangcomz.stickytimelineview.TimeLineRecyclerView
 import xyz.sangcomz.stickytimelineview.model.SectionInfo
 import java.util.*
 import kotlin.collections.ArrayList
+import kotlin.math.abs
 
 
 class TimeLineActivity : AppCompatActivity(), OnItemClickListener {
@@ -214,7 +215,11 @@ class TimeLineActivity : AppCompatActivity(), OnItemClickListener {
             }
         }
         CardsForTimeLine.arrayCards.sortBy {
-            it.startYear
+            it.startYear.substring(0,4).toInt()
+        }
+        CardsForTimeLine.arrayCards.forEach {
+            val year = it.startYear.substring(0,4).toInt()
+            it.startYear = if (year >= 0) "$year н.э." else "${abs(year)} до н.э."
         }
         //Add RecyclerSectionItemDecoration.SectionCallback
         if (firstTime) recyclerView.addItemDecoration(getSectionCallback(CardsForTimeLine.arrayCards))
@@ -265,7 +270,7 @@ interface OnItemClickListener{
 }
 data class Phil(
     val type: String,
-    val startYear: String,
+    var startYear: String,
     val name: String,
     val id: Int)
 class PhilsAdapter(private val layoutInflater: LayoutInflater,
