@@ -10,10 +10,20 @@
         android:orientation="vertical"
         android:layout_height="match_parent">
         <include layout="@layout/search_bar"/>
-    <xyz.sangcomz.stickytimelineview.TimeLineRecyclerView
-        android:id="@+id/recycler_view"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <xyz.sangcomz.stickytimelineview.TimeLineRecyclerView
+                android:id="@+id/recycler_view"
+                android:layout_width="match_parent"
+                android:background="#f9f9f9"
+                android:layout_height="wrap_content" />
+            <View
+                android:id="@+id/whileLine"
+                android:layout_width="match_parent"
+                android:layout_height="25dp"
+                android:background="#f9f9f9"/>
+        </RelativeLayout>
     </LinearLayout>
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/gotoGraph"

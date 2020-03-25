@@ -9,8 +9,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import android.widget.Toast
 import androidx.annotation.LayoutRes
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.marginTop
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.philsapp.api.*
@@ -213,13 +215,13 @@ class TimeLineActivity : AppCompatActivity(), OnItemClickListener {
                     )
                 }
             }
-        }
-        CardsForTimeLine.arrayCards.sortBy {
-            it.startYear.substring(0,4).toInt()
-        }
-        CardsForTimeLine.arrayCards.forEach {
-            val year = it.startYear.substring(0,4).toInt()
-            it.startYear = if (year >= 0) "$year н.э." else "${abs(year)} до н.э."
+            CardsForTimeLine.arrayCards.sortBy {
+                it.startYear.substring(0,4).toInt()
+            }
+            CardsForTimeLine.arrayCards.forEach {
+                val year = it.startYear.substring(0,4).toInt()
+                it.startYear = if (year >= 0) "$year н.э." else "${abs(year)} до н.э."
+            }
         }
         //Add RecyclerSectionItemDecoration.SectionCallback
         if (firstTime) recyclerView.addItemDecoration(getSectionCallback(CardsForTimeLine.arrayCards))
@@ -228,6 +230,9 @@ class TimeLineActivity : AppCompatActivity(), OnItemClickListener {
             CardsForTimeLine.arrayCards,
             R.layout.recycler_row, this)
         recyclerView.adapter!!.notifyDataSetChanged()
+        recyclerView.setOnScrollChangeListener { v, scrollX, scrollY, oldScrollX, oldScrollY ->
+            whileLine.visibility = if (recyclerView.canScrollVertically(-1)) View.GONE else View.VISIBLE
+        }
     }
     fun clearSearchResults() {
         layoutForSearch.visibility = View.GONE
