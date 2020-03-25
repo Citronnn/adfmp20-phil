@@ -163,12 +163,6 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
-        graphView.setMinZoom(1.0F, TYPE_ZOOM)
-        if(Nodes.nodes.size > 50) {
-            graphView.setMinZoom(10.0F, TYPE_ZOOM)
-        } else if (Nodes.nodes.size > 30) {
-            graphView.setMinZoom(5.0F, TYPE_ZOOM)
-        }
         // you can set the graph via the constructor or use the adapter.setGraph(Graph) method
         val adapter: BaseGraphAdapter<ViewHolder?> = object : BaseGraphAdapter<ViewHolder?>(graph) {
             override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -213,6 +207,13 @@ class MainActivity : AppCompatActivity() {
         }
         // set the algorithm here
         adapter.setAlgorithm(FruchtermanReingoldAlgorithm(1000))
+
+        graphView.setMinZoom(1.0F, TYPE_ZOOM)
+        if(Nodes.nodes.size > 50) {
+            graphView.setMinZoom(10.0F, TYPE_ZOOM)
+        } else if (Nodes.nodes.size > 20) {
+            graphView.setMinZoom(5.0F, TYPE_ZOOM)
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
