@@ -1,6 +1,5 @@
 package com.example.philsapp
 
-import android.annotation.SuppressLint
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
@@ -12,11 +11,15 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import com.example.philsapp.api.*
+import com.otaliastudios.zoom.ZoomApi.Companion.TYPE_ZOOM
 import de.blox.graphview.*
 import de.blox.graphview.energy.FruchtermanReingoldAlgorithm
+import de.blox.graphview.layered.SugiyamaAlgorithm
+import de.blox.graphview.tree.BuchheimWalkerAlgorithm
+import de.blox.graphview.tree.BuchheimWalkerConfiguration
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.search_bar.*
-import com.otaliastudios.zoom.ZoomApi.Companion.TYPE_ZOOM
+
 
 class NodeInfo (val text: String,
                 val type: String,
@@ -116,7 +119,7 @@ class MainActivity : AppCompatActivity() {
         } else {
             val data = db.getAllPhilosophers(
                 Filter(
-                    limit = if (FiltersActivity.Filters.topGT == 1) FiltersActivity.Filters.countGT else 20,
+                    limit = FiltersActivity.Filters.countGT,
                     filter = arrayOf(FilterBy("birthDate", Operator.GT, dateToJd(FiltersActivity.Filters.yearStart)),
                           FilterBy("birthDate", Operator.LT, dateToJd(FiltersActivity.Filters.yearEnd)))
                 )
@@ -206,7 +209,11 @@ class MainActivity : AppCompatActivity() {
             startActivityForResult(myIntent, 4)
         }
         // set the algorithm here
-        adapter.setAlgorithm(FruchtermanReingoldAlgorithm(1000))
+        if (FiltersActivity.Filters.currentAlgorithm == 1) {
+            adapter.setAlgorithm(FruchtermanReingoldAlgorithm(1000))
+        } else {
+            adapter.algorithm = SugiyamaAlgorithm()
+        }
 
         graphView.setMinZoom(1.0F, TYPE_ZOOM)
         if(Nodes.nodes.size > 50) {

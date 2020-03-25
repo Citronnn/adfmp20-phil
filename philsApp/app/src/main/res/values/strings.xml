@@ -16,4 +16,7 @@
     <string name="labelForSearchCardType">Тип: </string>
     <string name="labelForSearchCardYears">Годы жизни: </string>
     <string name="filtersTopic">Фильтрация</string>
+    <string name="algorithmFilter">Алгоритм</string>
+    <string name="firstAlgorithmName">Fruchterman-Reingold</string>
+    <string name="secondAlgorithmName">Sugiyama</string>
 </resources>

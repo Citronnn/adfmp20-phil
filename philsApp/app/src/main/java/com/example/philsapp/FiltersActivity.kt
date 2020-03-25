@@ -31,6 +31,7 @@ class FiltersActivity : AppCompatActivity() {
         var topGT = 0
         var yearStart = 300
         var yearEnd = 1000
+        var currentAlgorithm = 1
     }
     object SearchResults {
         var wordForSearch = ""

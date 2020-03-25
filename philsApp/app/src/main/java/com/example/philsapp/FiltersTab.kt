@@ -27,6 +27,7 @@ class FiltersTab : Fragment() {
         var countGT: Int = 20
         var yearStart = 300
         var yearEnd = 1000
+        var currentAlgorithm = 1
     }
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -44,17 +45,29 @@ class FiltersTab : Fragment() {
         val decreaseButton = view.findViewById<ImageButton>(R.id.decreaseButton)
         val layoutForGoogleTrends = view.findViewById<LinearLayout>(R.id.layoutForGoogleTrends)
         val buttonClearFilters: Button = view.findViewById<Button>(R.id.buttonClearFilters)
+        val firstAlgorithmRadio = view.findViewById<RadioButton>(R.id.firstAlgorithmRadio)
+        val secondAlgorithmRadio = view.findViewById<RadioButton>(R.id.secondAlgorithmRadio)
+        firstAlgorithmRadio.setOnCheckedChangeListener { buttonView, isChecked ->
+            if (isChecked) {
+                FiltersActivity.Filters.currentAlgorithm = 1
+                FiltersActivity.Filters.countGT = 20
+            } else {
+                FiltersActivity.Filters.currentAlgorithm = 2
+                FiltersActivity.Filters.countGT = 10
+            }
+            editCount.setText("${FiltersActivity.Filters.countGT }")
+        }
         buttonClearFilters.setOnClickListener {
             dropFilters()
             setFilters(rangeBar, schoolsFilter,
                 meansFilter, agesFilter, googleTrendsFilter, layoutForGoogleTrends,
-                editCount)
+                editCount, firstAlgorithmRadio, secondAlgorithmRadio)
         }
         rangeBar.tickStart = (startRangePin).toFloat()
         rangeBar.tickEnd = endRangePin.toFloat()
         setFilters(rangeBar, schoolsFilter,
             meansFilter, agesFilter, googleTrendsFilter, layoutForGoogleTrends,
-            editCount)
+            editCount, firstAlgorithmRadio, secondAlgorithmRadio)
         editCount.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
 
@@ -62,9 +75,13 @@ class FiltersTab : Fragment() {
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 FiltersActivity.Filters.countGT = Integer.parseInt(editCount.text.toString())
-                if (Integer.parseInt(editCount.text.toString()) > 25) {
-                    FiltersActivity.Filters.countGT = 25
-                    editCount.setText("25")
+                var maxCount = 13
+                if (FiltersActivity.Filters.currentAlgorithm == 1) {
+                    maxCount = 25
+                }
+                if (Integer.parseInt(editCount.text.toString()) > maxCount) {
+                    FiltersActivity.Filters.countGT = maxCount
+                    editCount.setText("$maxCount")
                 }
                 if (Integer.parseInt(editCount.text.toString()) < 0) {
                     FiltersActivity.Filters.countGT = 0
@@ -141,8 +158,11 @@ class FiltersTab : Fragment() {
     }
     fun setFilters(rangeBar: RangeBar, schoolsFilter:CheckBox,
                           meansFilter: CheckBox, agesFilter: CheckBox, googleTrendsFilter: CheckBox,
-                          layoutForGoogleTrends: LinearLayout, editCount: EditText) {
+                          layoutForGoogleTrends: LinearLayout, editCount: EditText,
+                   firstAlgorithmRadio: RadioButton, secondAlgorithmRadio: RadioButton) {
         editCount.setText(FiltersActivity.Filters.countGT.toString())
+        firstAlgorithmRadio.isChecked = (FiltersActivity.Filters.currentAlgorithm == 1)
+        secondAlgorithmRadio.isChecked = (FiltersActivity.Filters.currentAlgorithm == 2)
         agesFilter.isChecked = FiltersActivity.Filters.ages == 1
         schoolsFilter.isChecked = FiltersActivity.Filters.schools == 1
         meansFilter.isChecked = FiltersActivity.Filters.meanings == 1
@@ -164,6 +184,7 @@ class FiltersTab : Fragment() {
         FiltersActivity.Filters.topGT = FiltersObject.topGT
         FiltersActivity.Filters.yearStart = FiltersObject.yearStart
         FiltersActivity.Filters.yearEnd = FiltersObject.yearEnd
+        FiltersActivity.Filters.currentAlgorithm = FiltersObject.currentAlgorithm
     }
 
 }

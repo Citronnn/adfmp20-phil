@@ -60,12 +60,36 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/googleTrendsFilter"/>
+    <TextView
+        android:id="@+id/algorithmTypeLabel"
+        android:layout_below="@id/googleTrendsFilter"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="25sp"
+        android:text="@string/algorithmFilter"/>
+    <RadioGroup
+        android:id="@+id/algorithmRadioGroup"
+        android:layout_below="@+id/algorithmTypeLabel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <RadioButton
+            android:id="@+id/firstAlgorithmRadio"
+            android:layout_width="match_parent"
+            android:text="@string/firstAlgorithmName"
+            android:layout_height="wrap_content"
+            android:checked="true"/>
+        <RadioButton
+            android:id="@+id/secondAlgorithmRadio"
+            android:text="@string/secondAlgorithmName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+    </RadioGroup>
     <LinearLayout
         android:id="@+id/layoutForGoogleTrends"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="10dp"
-        android:layout_below="@id/googleTrendsFilter">
+        android:layout_below="@id/algorithmRadioGroup">
         <TextView
             android:id="@+id/countLabel"
             android:layout_width="wrap_content"
@@ -85,8 +109,7 @@
             android:layout_height="wrap_content"
             android:textSize="20sp"
             android:inputType="numberSigned"
-            android:layout_marginLeft="5dp"
-            android:text="50" />
+            android:layout_marginLeft="5dp" />
         <ImageButton
             android:id="@+id/increaseButton"
             android:layout_width="wrap_content"
