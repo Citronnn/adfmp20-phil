@@ -47,13 +47,10 @@ class MainActivity : AppCompatActivity() {
             if (current > FiltersActivity.SearchResults.listPhils.size - 1) {
                 typeForSearch = "school"
                 current -= FiltersActivity.SearchResults.listPhils.size
-                if (current > FiltersActivity.SearchResults.listPhils.size
-                    + FiltersActivity.SearchResults.listSchools.size - 1) {
-                    typeForSearch = "ideas"
+                if (current > FiltersActivity.SearchResults.listSchools.size - 1) {
+                    typeForSearch = "meaning"
                     current -= FiltersActivity.SearchResults.listSchools.size
-                    if (current > FiltersActivity.SearchResults.listPhils.size
-                        + FiltersActivity.SearchResults.listSchools.size
-                        + FiltersActivity.SearchResults.listIdeas.size- 1) {
+                    if (current > FiltersActivity.SearchResults.listIdeas.size - 1) {
                         current -= FiltersActivity.SearchResults.listIdeas.size
                         typeForSearch = "age"
                     }
@@ -107,11 +104,13 @@ class MainActivity : AppCompatActivity() {
                     val data = FiltersActivity.SearchResults.listIdeas[current]
                     Nodes.nodesInfo.add(NodeInfo(data.name, "meaning",0))
                     Nodes.nodes.add(Node(Nodes.nodesInfo[0].text))
+                    graph.addNode(Nodes.nodes[Nodes.nodes.size - 1])
                 }
                 "age" -> {
                     val data = FiltersActivity.SearchResults.listEras[current]
                     Nodes.nodesInfo.add(NodeInfo(data.name, "age",0))
                     Nodes.nodes.add(Node(Nodes.nodesInfo[0].text))
+                    graph.addNode(Nodes.nodes[Nodes.nodes.size - 1])
                 }
             }
         } else {
