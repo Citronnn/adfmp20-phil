@@ -1,11 +1,21 @@
 package com.example.philsapp
 
-import androidx.appcompat.app.AppCompatActivity
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
+import android.text.Html
+import android.text.Spannable
+import android.text.SpannableStringBuilder
+import android.text.method.LinkMovementMethod
+import android.text.style.ClickableSpan
+import android.text.style.URLSpan
 import android.util.Log
 import android.view.View
+import androidx.appcompat.app.AppCompatActivity
+import com.example.philsapp.ClickableLinks.reformatText
 import com.example.philsapp.api.*
 import kotlinx.android.synthetic.main.activity_info_card.*
+
 
 class InfoCardActivity : AppCompatActivity() {
 
@@ -66,7 +76,13 @@ class InfoCardActivity : AppCompatActivity() {
             layoutForAbstract.visibility = View.GONE
         }
         if (wiki != null) {
-            wikiContent.text = wiki
+            wikiContent.text = Html.fromHtml("<a href=\"$wiki\">$wiki</a>", null, null)
+            wikiContent.linksClickable = true
+            wikiContent.movementMethod = LinkMovementMethod.getInstance()
+            val text: CharSequence = wikiContent.text
+            if (text is Spannable) {
+                wikiContent.text = reformatText(text)
+            }
         } else {
             layoutForWiki.visibility = View.GONE
         }
@@ -92,7 +108,13 @@ class InfoCardActivity : AppCompatActivity() {
             layoutForAbstract.visibility = View.GONE
         }
         if (wiki != null) {
-            wikiContent.text = wiki
+            wikiContent.text = Html.fromHtml("<a href=\"$wiki\">$wiki</a>", null, null)
+            wikiContent.linksClickable = true
+            wikiContent.movementMethod = LinkMovementMethod.getInstance()
+            val text: CharSequence = wikiContent.text
+            if (text is Spannable) {
+                wikiContent.text = reformatText(text)
+            }
         } else {
             layoutForWiki.visibility = View.GONE
         }
