@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.philsapp.api.*
 import kotlinx.android.synthetic.main.search_card_view.view.*
+import java.lang.Math.abs
 
 
 /**
@@ -96,8 +97,13 @@ class SearchTab : Fragment() {
         cards = ArrayList<SearchCard>()
         FiltersActivity.SearchResults.listPhils.forEach {
             Log.d("kek", it.name)
-            (cards as ArrayList<SearchCard>).add(SearchCard((it.name), "Философ",
-                if (it.birthDate != null && it.deathDate != null) "${it.birthDate} - ${it.deathDate}" else "Неизвестно"))
+            var years = "Неизвестно"
+            if (it.birthDate != null && it.deathDate != null) {
+                val yearBirth = it.birthDate.substring(0, 4).toInt()
+                val yearDeath = it.deathDate.substring(0, 4).toInt()
+                years = "${if (yearBirth >= 0) "$yearBirth н.э." else "${abs(yearBirth)} до н.э."} - ${if (yearDeath >= 0) "$yearDeath н.э." else "${abs(yearDeath)} до н.э."}"
+            }
+            (cards as ArrayList<SearchCard>).add(SearchCard((it.name), "Философ", years))
         }
         FiltersActivity.SearchResults.listSchools.forEach {
             (cards as ArrayList<SearchCard>).add(SearchCard((it.name), "Школа", null))

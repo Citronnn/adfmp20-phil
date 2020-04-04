@@ -15,6 +15,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.example.philsapp.ClickableLinks.reformatText
 import com.example.philsapp.api.*
 import kotlinx.android.synthetic.main.activity_info_card.*
+import kotlin.math.abs
 
 
 class InfoCardActivity : AppCompatActivity() {
@@ -129,12 +130,14 @@ class InfoCardActivity : AppCompatActivity() {
             layoutForGender.visibility = View.GONE
         }
         if (birthDay != null) {
-            birthDayPhil.text = birthDay
+            val year = birthDay.substring(0,4).toInt()
+            birthDayPhil.text = if (year >= 0) "$year н.э." else "${abs(year)} до н.э."
         } else {
             layoutForBirthDay.visibility = View.GONE
         }
         if (deathDay != null) {
-            deathDayPhil.text = birthDay
+            val year = deathDay.substring(0,4).toInt()
+            deathDayPhil.text = if (year >= 0) "$year н.э." else "${abs(year)} до н.э."
         } else {
             layoutForDeathDay.visibility = View.GONE
         }

@@ -92,7 +92,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Дата рождения: "
+            android:text="Год рождения: "
             android:textStyle="bold"/>
         <TextView
             android:id="@+id/birthDayPhil"
@@ -108,7 +108,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Дата смерти: "
+            android:text="Год смерти: "
             android:textStyle="bold"/>
         <TextView
             android:id="@+id/deathDayPhil"
