@@ -11,10 +11,7 @@ import java.io.FileOutputStream
 class Database(val context: Context) :
     SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
     init {
-        if (!DB_COPIED) {
             copyDataBase()
-            DB_COPIED = true
-        }
     }
 
     private fun copyDataBase() {
@@ -24,7 +21,7 @@ class Database(val context: Context) :
         context.resources.openRawResource(R.raw.db).use { input ->
             FileOutputStream(path).use { output ->
                 input.copyTo(output)
-                output.flush()
+                output.close()
             }
         }
     }
@@ -133,7 +130,5 @@ class Database(val context: Context) :
         var DATABASE_NAME = "db.sqlite"
         var DATABASE_VERSION = 1
         var TAG = "Database"
-
-        var DB_COPIED = false
     }
 }
