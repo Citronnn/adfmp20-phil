@@ -6,39 +6,47 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.UiController
 import androidx.test.espresso.ViewAction
-import androidx.test.espresso.action.ViewActions.click
-import androidx.test.espresso.action.ViewActions.typeText
+import androidx.test.espresso.action.ViewActions.*
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.contrib.RecyclerViewActions
 import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import androidx.test.rule.ActivityTestRule
+import com.appyvet.materialrangebar.RangeBar
 import org.hamcrest.Description
 import org.hamcrest.Matcher
 import org.hamcrest.TypeSafeMatcher
 import org.hamcrest.core.AllOf.allOf
-import org.junit.Rule
-import org.junit.Test
+import org.junit.*
 import org.junit.runner.RunWith
 
+@BeforeClass
+fun init() {
+    FiltersActivity.Filters.countGT = 1
+}
 
 @RunWith(AndroidJUnit4::class)
 @LargeTest
 class TestUI {
+
+    private val ITEM_BELOW_THE_FOLD = 20
+
+    @After
+    fun afterEachTest() {
+        FiltersActivity.Filters.countGT = 1
+    }
 
     @get:Rule
     val activityRule = ActivityTestRule(MainActivity::class.java)
 
     @Test
     fun graphVisible() {
-        FiltersActivity.Filters.countGT = 1 // to limit Philosophers
         onView(allOf(withId(R.id.graph), hasMinimumChildCount(2))).check(matches(isDisplayed()))
     }
 
     @Test
     fun clickOnGraphNode() {
-        FiltersActivity.Filters.countGT = 20 // set default val back
         val nodeTitle = getText(withIndex(withId(R.id.nodeTextView), 0))
         onView(withIndex(withId(R.id.nodeTextView), 0)).perform(click())
         onView(withId(R.id.titleContent)).check(matches(isDisplayed())).check(matches(withText(nodeTitle)))
@@ -53,6 +61,46 @@ class TestUI {
         onView(withId(R.id.rv)).perform(RecyclerViewActions.actionOnItemAtPosition<RecyclerView.ViewHolder>(0, click()))
         onView(withText("Plato")).perform(click())
         onView(withId(R.id.titleContent)).check(matches(isDisplayed())).check(matches(withText("Plato")))
+    }
+
+    @Test
+    fun clickOnTimeline() {
+        onView(withId(R.id.gotoLine)).perform(click())
+        onView(withId(R.id.recycler_view)).perform(RecyclerViewActions.actionOnItemAtPosition<RecyclerView.ViewHolder>(ITEM_BELOW_THE_FOLD, click()))
+        onView(withId(R.id.titleContent)).check(matches(isDisplayed()))
+    }
+
+    @Test
+    fun checkFiltersWithGraph() {
+        onView(withId(R.id.filters)).perform(click())
+        onView(withId(R.id.buttonClearFilters)).perform(click())
+        onView(withId(R.id.rangeBar)).perform(setProgress(-800F, 1981F))
+        onView(withId(R.id.schoolsFilter)).perform(click())
+        onView(withId(R.id.meansFilter)).perform(click())
+        onView(withId(R.id.agesFilter)).perform(click())
+        onView(withId(R.id.googleTrendsFilter)).perform(click())
+        onView(withId(R.id.returnFromFilters)).perform(click())
+        onView(allOf(withId(R.id.graph), hasMinimumChildCount(2))).check(matches(isDisplayed()))
+
+        onView(withId(R.id.filters)).perform(click())
+        onView(withId(R.id.buttonClearFilters)).perform(click())
+    }
+
+    @Test
+    fun checkFiltersWithTimeline() {
+        onView(withId(R.id.gotoLine)).perform(click())
+        onView(withId(R.id.filters)).perform(click())
+        onView(withId(R.id.buttonClearFilters)).perform(click())
+        onView(withId(R.id.rangeBar)).perform(setProgress(-800F, 1981F))
+        onView(withId(R.id.schoolsFilter)).perform(click())
+        onView(withId(R.id.meansFilter)).perform(click())
+        onView(withId(R.id.agesFilter)).perform(click())
+        onView(withId(R.id.googleTrendsFilter)).perform(click())
+        onView(withId(R.id.returnFromFilters)).perform(click())
+        onView(withId(R.id.recycler_view)).check(matches(isDisplayed()))
+
+        onView(withId(R.id.filters)).perform(click())
+        onView(withId(R.id.buttonClearFilters)).perform(click())
     }
 }
 
@@ -88,4 +136,24 @@ fun getText(matcher: Matcher<View?>?): String? {
         }
     })
     return stringHolder[0]
+}
+
+fun setProgress(leftPin: Float, rightPin: Float): ViewAction? {
+    return object : ViewAction {
+        override fun perform(
+            uiController: UiController,
+            view: View
+        ) {
+            val rangeBar = view as RangeBar
+            rangeBar.setRangePinsByValue(leftPin, rightPin)
+        }
+
+        override fun getDescription(): String {
+            return "Set a progress on a RangeBar"
+        }
+
+        override fun getConstraints(): Matcher<View> {
+            return isAssignableFrom(RangeBar::class.java)
+        }
+    }
 }
