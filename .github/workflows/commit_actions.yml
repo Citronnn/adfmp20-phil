@@ -28,5 +28,6 @@ jobs:
 
     - name: Unit tests
       run: |
-        chmod +x ./philsApp/gradlew
-        ./philsApp/gradlew test --stacktrace
+        cd philsApp/
+        chmod +x ./gradlew
+        ./gradlew test --stacktrace
