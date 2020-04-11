@@ -47,6 +47,10 @@ class TestUI {
 
     @Test
     fun clickOnGraphNode() {
+        onView(withId(R.id.filters)).perform(click())
+        onView(withId(R.id.buttonClearFilters)).perform(click())
+        onView(withId(R.id.schoolsFilter)).perform(click())
+        onView(withId(R.id.returnFromFilters)).perform(click())
         val nodeTitle = getText(withIndex(withId(R.id.nodeTextView), 0))
         onView(withIndex(withId(R.id.nodeTextView), 0)).perform(click())
         onView(withId(R.id.titleContent)).check(matches(isDisplayed())).check(matches(withText(nodeTitle)))
@@ -55,6 +59,8 @@ class TestUI {
     @Test
     fun searchPhilosopher() {
         onView(withId(R.id.filters)).perform(click())
+        onView(withId(R.id.buttonClearFilters)).perform(click())
+        onView(withId(R.id.schoolsFilter)).perform(click())
         onView(allOf(withText("Поиск"), isDescendantOfA(withId(R.id.tabs)))).perform(click())
         onView(withId(R.id.textForSearch)).perform(typeText("Plato"))
         onView(withId(R.id.buttonForSearch)).perform(click())
